@@ -190,6 +190,16 @@
       margin-top: 4px;
     }
 
+    /* Gráficos */
+    .chart-panel {
+      margin-top: 8px;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
     @media (max-width: 900px) {
       .columns {
         grid-template-columns: minmax(0, 1fr);
@@ -421,7 +431,8 @@
       <div class="panel">
         <div class="panel-title">Mensagens de risco em contexto (IA)</div>
         <div class="card-extra" style="margin-bottom:6px;">
-        Painel alimentado por IA_Classifier_Contextual. Mostra a avaliação contextual e um resumo da janela de conversa até 3 antes e 2 depois.&nbsp; &nbsp; &nbsp; &nbsp;</div>
+          Painel alimentado por IA_Classifier_Contextual. Mostra a avaliação contextual e um resumo da janela de conversa até 3 antes e 2 depois.
+        </div>
 
         <!-- Filtros TAG + contato + grupo -->
         <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -477,6 +488,64 @@
     </div>
   </div>
 
+  <!-- ================== NOVA SEÇÃO DE GRÁFICOS ================== -->
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens totais por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTotalMessages"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Riscos altos / suicidas & depressivos por dia</div>
+    <div class="chart-container">
+      <canvas id="chartHighRiskTags"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Monitoramento – Fernando (mensagens de risco por dia)</div>
+    <div class="chart-container">
+      <canvas id="chartFernando"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Monitoramento – Maria Cecília (mensagens de risco por dia)</div>
+    <div class="chart-container">
+      <canvas id="chartMaria"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Maior ofensor individual – mensagens de risco por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTopOffender"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Grupo com mais ofensas – mensagens de risco por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTopOffenderGroup"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens com maior risco (IA) – soma diária dos scores por TAG</div>
+    <div class="chart-container">
+      <canvas id="chartRiskScores"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens de risco em contexto (IA) – soma diária dos scores por TAG</div>
+    <div class="chart-container">
+      <canvas id="chartCtxScores"></canvas>
+    </div>
+  </div>
+  <!-- ================== FIM DA SEÇÃO DE GRÁFICOS ================== -->
+
   <div class="footer">
     Construído para uso privado e educativo. Não substitui acompanhamento profissional,
     nem deve ser usado para rotular pessoas. O objetivo é ajudar responsáveis a acompanhar
@@ -499,11 +568,14 @@
     </div>
   </div>
 
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF88Y4mf-4cWy5aVt8SMNaugOsYdqmVYVh5Bdl_uNC2yGA/exec?mode=json";
+    // URL DO SEU WEB APP DO APPS SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF88Y4mf-4cWy5aVt8SMNaugOsYdqmVYVh5Bdl_uNC2yGA/exec?mode=json";
 
-
-    // Mapa de nomes "de -> para" (ajuste conforme suas tabelas)
+    // Mapa de nomes "de -> para"
     const NAME_MAP = {
       "120363402480279175@g.us": "Revolução dos bichos",
       "120363220644765994@g.us": "Trabalho de pesquisa",
@@ -542,6 +614,18 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
     const TAGS_POSITIVE = ["apoio_positivo"];
     const HIGH_RISK_LABELS_FOR_CARD = ["suicida", "depressivo", "violencia", "autoagressao"];
 
+    const RISK_LABELS_FOR_CHARTS = [
+      "depressivo",
+      "suicida",
+      "autoagressao",
+      "violencia",
+      "desrespeito",
+      "bullying",
+      "sexual_inadequado",
+      "controle_ciumento"
+    ];
+    const RISK_LABELS_SET = new Set(RISK_LABELS_FOR_CHARTS);
+
     const MIN_CTX_SCORE = 30;
 
     let riskMessagesGlobal = [];
@@ -557,6 +641,36 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
     let allRowsGlobal = [];
     let rowByRowIdGlobal = {};
 
+    // REGISTRO DOS GRÁFICOS
+    const chartsRegistry = {};
+
+    // Paleta de cores para TAGs
+    const TAG_COLORS = {
+      suicida: "#fb7185",
+      depressivo: "#60a5fa",
+      violencia: "#facc15",
+      autoagressao: "#f97316",
+      bullying: "#a855f7",
+      sexual_inadequado: "#ec4899",
+      controle_ciumento: "#22c55e",
+      desrespeito: "#e5e7eb",
+      total: "#38bdf8"
+    };
+    const FALLBACK_COLORS = [
+      "#38bdf8", "#a855f7", "#22c55e", "#f97316",
+      "#facc15", "#fb7185", "#e5e7eb", "#818cf8"
+    ];
+
+    function getColorForTag(tag, idx) {
+      const key = String(tag || "").toLowerCase();
+      if (TAG_COLORS[key]) return TAG_COLORS[key];
+      return FALLBACK_COLORS[idx % FALLBACK_COLORS.length];
+    }
+
+    function isRiskLabelName(label) {
+      return RISK_LABELS_SET.has(String(label || "").toLowerCase());
+    }
+
     function parseLabels(str) {
       if (!str) return [];
       return String(str)
@@ -566,7 +680,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
     }
 
     function hasAnyLabel(labels, targetList) {
-      return labels.some(l => targetList.includes(l));
+      const set = new Set(targetList.map(l => String(l).toLowerCase()));
+      return labels.some(l => set.has(String(l).toLowerCase()));
     }
 
     function parseDate(str) {
@@ -629,7 +744,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
         return container;
       }
 
-      entries.forEach(([label, count]) => {
+      entries.forEach(([label, count], idx) => {
         const tagSpan = createTagSpan(label);
         if (tagSpan) {
           tagSpan.textContent = `${label} (${count})`;
@@ -967,6 +1082,94 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
       console.log("Mensagens com contexto detectadas:", contextMessages.length, contextMessages);
     }
 
+    // Helper para labels de datas no eixo X
+    function formatDayKey(dayKey) {
+      // espera "YYYY-MM-DD"
+      const parts = String(dayKey).split("-");
+      if (parts.length === 3) {
+        return parts[2] + "/" + parts[1];
+      }
+      return dayKey;
+    }
+
+    // Converte mapa {dia:{tag:valor}} em labels + datasets do Chart.js
+    function dailyTagMapToChartData(dailyMap) {
+      const days = Object.keys(dailyMap).sort();
+      const labels = days.map(formatDayKey);
+
+      const tagSet = new Set();
+      days.forEach(day => {
+        Object.keys(dailyMap[day]).forEach(tag => tagSet.add(tag));
+      });
+
+      const datasets = Array.from(tagSet).sort().map((tag, idx) => {
+        const data = days.map(day => dailyMap[day][tag] || 0);
+        const color = getColorForTag(tag, idx);
+        return {
+          label: tag,
+          data,
+          tension: 0.3,
+          fill: false,
+          borderColor: color,
+          backgroundColor: color,
+          pointRadius: 2
+        };
+      });
+
+      return { labels, datasets };
+    }
+
+    function upsertLineChart(chartKey, canvasId, labels, datasets, yAxisTitle) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      const baseConfig = {
+        type: "line",
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: {
+              labels: { color: "#e5e7eb", font: { size: 10 } }
+            },
+            tooltip: {
+              enabled: true
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: "#9ca3af", maxRotation: 0 },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { color: "#9ca3af" },
+              grid: { color: "rgba(148,163,184,0.2)" },
+              title: yAxisTitle
+                ? {
+                    display: true,
+                    text: yAxisTitle,
+                    color: "#9ca3af",
+                    font: { size: 11 }
+                  }
+                : undefined
+            }
+          }
+        }
+      };
+
+      if (chartsRegistry[chartKey]) {
+        const chart = chartsRegistry[chartKey];
+        chart.data.labels = labels;
+        chart.data.datasets = datasets;
+        chart.update();
+      } else {
+        chartsRegistry[chartKey] = new Chart(ctx, baseConfig);
+      }
+    }
+
     function updateDashboard(data) {
       const total = data.length;
 
@@ -1016,6 +1219,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
       let minDate = null;
       let maxDate = null;
 
+      // Mapas diários para os gráficos
+      const dailyTotals = {};
+      const dailyHighRiskTags = {};
+      const dailyFernandoRiskTags = {};
+      const dailyMariaRiskTags = {};
+
       function sameMonthYear(d1, d2) {
         return (
           d1 &&
@@ -1032,11 +1241,13 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
         const status = row.status || "";
 
         const d = parseDate(row.timestamp);
+        let dayKey = null;
         if (d) {
           if (!minDate || d < minDate) minDate = d;
           if (!maxDate || d > maxDate) maxDate = d;
 
-          const dayKey = d.toISOString().slice(0, 10);
+          dayKey = d.toISOString().slice(0, 10);
+
           const dir = classifyDirection(status);
 
           if (sameMonthYear(d, now)) {
@@ -1046,6 +1257,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
           if (dayKey === todayKey) {
             if (dir === "sent") todaySent++;
             if (dir === "received") todayReceived++;
+          }
+
+          // total diário
+          if (dayKey) {
+            dailyTotals[dayKey] = (dailyTotals[dayKey] || 0) + 1;
           }
         }
 
@@ -1088,7 +1304,18 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
         ]);
         const isPositive  = labels.includes("apoio_positivo");
 
-        if (isHighRisk) highRiskCount++;
+        if (isHighRisk) {
+          highRiskCount++;
+          if (dayKey) {
+            if (!dailyHighRiskTags[dayKey]) dailyHighRiskTags[dayKey] = {};
+            HIGH_RISK_LABELS_FOR_CARD.forEach(tag => {
+              if (labels.includes(tag)) {
+                dailyHighRiskTags[dayKey][tag] =
+                  (dailyHighRiskTags[dayKey][tag] || 0) + 1;
+              }
+            });
+          }
+        }
 
         if (hasAnyLabel(labels, HIGH_RISK_LABELS_FOR_CARD)) {
           highRiskContacts[senderRaw] = (highRiskContacts[senderRaw] || 0) + 1;
@@ -1113,6 +1340,16 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
             if (norm === "ignorado") return;
             fernandoTagCounts[label] = (fernandoTagCounts[label] || 0) + 1;
           });
+
+          if (dayKey && isRiskLabel) {
+            if (!dailyFernandoRiskTags[dayKey]) dailyFernandoRiskTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyFernandoRiskTags[dayKey][key] =
+                (dailyFernandoRiskTags[dayKey][key] || 0) + 1;
+            });
+          }
         }
 
         if (isMaria) {
@@ -1124,6 +1361,16 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
             if (norm === "ignorado") return;
             mariaTagCounts[label] = (mariaTagCounts[label] || 0) + 1;
           });
+
+          if (dayKey && isRiskLabel) {
+            if (!dailyMariaRiskTags[dayKey]) dailyMariaRiskTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyMariaRiskTags[dayKey][key] =
+                (dailyMariaRiskTags[dayKey][key] || 0) + 1;
+            });
+          }
         }
 
         if (isRiskLabel) {
@@ -1553,6 +1800,134 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxxWBB-Jfjkp6NvFnucY9XF
           tr.appendChild(tdPct);
           tbodyTags.appendChild(tr);
         });
+      }
+
+      // =========================
+      //   CONSTRUÇÃO DOS GRÁFICOS
+      // =========================
+
+      // 1) Total de mensagens
+      const dailyTotalsWrapped = {};
+      Object.keys(dailyTotals).forEach(day => {
+        dailyTotalsWrapped[day] = { total: dailyTotals[day] };
+      });
+      if (Object.keys(dailyTotalsWrapped).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTotalsWrapped);
+        datasets.forEach(ds => { ds.label = "Total"; });
+        upsertLineChart("chartTotalMessages", "chartTotalMessages", labels, datasets, "Mensagens por dia");
+      }
+
+      // 2) Riscos altos / suicidas & depressivos
+      if (Object.keys(dailyHighRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyHighRiskTags);
+        upsertLineChart("chartHighRiskTags", "chartHighRiskTags", labels, datasets, "Mensagens de alto risco por dia");
+      }
+
+      // 3) 4) Fernando / Maria – mapas já montados (contagem de mensagens de risco por TAG)
+      if (Object.keys(dailyFernandoRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyFernandoRiskTags);
+        upsertLineChart("chartFernando", "chartFernando", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      if (Object.keys(dailyMariaRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyMariaRiskTags);
+        upsertLineChart("chartMaria", "chartMaria", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      // 5) 6) Maior ofensor individual / Grupo com mais ofensas
+      const dailyTopOffenderTags = {};
+      const dailyTopOffenderGroupTags = {};
+
+      if (topOffenderPerson || topOffenderGroup) {
+        data.forEach(row => {
+          const d = parseDate(row.timestamp);
+          if (!d) return;
+          const dayKey = d.toISOString().slice(0, 10);
+          const labels = parseLabels(row.ia_labels);
+          const isRisk = hasAnyLabel(labels, [
+            "depressivo","suicida","autoagressao","violencia",
+            "desrespeito","bullying","sexual_inadequado","controle_ciumento"
+          ]);
+          if (!isRisk) return;
+
+          if (topOffenderPerson && row.sender === topOffenderPerson.key) {
+            if (!dailyTopOffenderTags[dayKey]) dailyTopOffenderTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyTopOffenderTags[dayKey][key] =
+                (dailyTopOffenderTags[dayKey][key] || 0) + 1;
+            });
+          }
+
+          if (topOffenderGroup && row.group === topOffenderGroup.key) {
+            if (!dailyTopOffenderGroupTags[dayKey]) dailyTopOffenderGroupTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyTopOffenderGroupTags[dayKey][key] =
+                (dailyTopOffenderGroupTags[dayKey][key] || 0) + 1;
+            });
+          }
+        });
+      }
+
+      if (Object.keys(dailyTopOffenderTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTopOffenderTags);
+        upsertLineChart("chartTopOffender", "chartTopOffender", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      if (Object.keys(dailyTopOffenderGroupTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTopOffenderGroupTags);
+        upsertLineChart("chartTopOffenderGroup", "chartTopOffenderGroup", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      // 7) Mensagens com maior risco (IA) – soma diária dos scores por TAG
+      const dailyRiskScores = {};
+      riskMessagesGlobal.forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+        if (!d) return;
+        const dayKey = d.toISOString().slice(0, 10);
+        const score = Number(item.score || 0);
+        if (!score) return;
+        const labels = item.labels || [];
+        labels.forEach(l => {
+          if (!isRiskLabelName(l)) return;
+          const key = String(l).toLowerCase();
+          if (!dailyRiskScores[dayKey]) dailyRiskScores[dayKey] = {};
+          dailyRiskScores[dayKey][key] =
+            (dailyRiskScores[dayKey][key] || 0) + score;
+        });
+      });
+
+      if (Object.keys(dailyRiskScores).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyRiskScores);
+        upsertLineChart("chartRiskScores", "chartRiskScores", labels, datasets, "Soma dos scores por dia");
+      }
+
+      // 8) Mensagens com maior risco em contexto (IA) – soma diária dos scores por TAG
+      const dailyCtxScores = {};
+      contextMessagesGlobal.forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+        if (!d) return;
+        const dayKey = d.toISOString().slice(0, 10);
+        const score = Number(item.ctxScore || 0);
+        if (!score) return;
+        const labelsCtx = item.labelsCtx || [];
+        labelsCtx.forEach(l => {
+          if (!isRiskLabelName(l)) return;
+          const key = String(l).toLowerCase();
+          if (!dailyCtxScores[dayKey]) dailyCtxScores[dayKey] = {};
+          dailyCtxScores[dayKey][key] =
+            (dailyCtxScores[dayKey][key] || 0) + score;
+        });
+      });
+
+      if (Object.keys(dailyCtxScores).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyCtxScores);
+        upsertLineChart("chartCtxScores", "chartCtxScores", labels, datasets, "Soma dos scores de contexto por dia");
       }
     }
 
