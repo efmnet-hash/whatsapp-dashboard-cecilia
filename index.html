@@ -2,781 +2,1162 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <title>Dashboard WhatsApp – Cecília (versão iA)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard WhatsApp — Neon Analytics</title>
-
-  <!-- Tailwind via CDN (ok para projeto pessoal) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Chart.js para os gráficos -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
-    :root {
-      color-scheme: dark;
-    }
     body {
-      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000000 100%);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.6rem;
+    }
+    .subtitle {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
     .card {
-      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), rgba(15, 23, 42, 0.95));
-      border-radius: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(18px);
+      background: #020617;
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid #1f2937;
     }
-    .card-soft {
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.95));
-      border-radius: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(14px);
-    }
-    .card-header {
+    .card-title {
       font-size: 0.8rem;
-      letter-spacing: .16em;
+      color: #9ca3af;
+      margin-bottom: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .badge-pill {
+    .card-value {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    .card-extra {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+    .panel {
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th, td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #1f2937;
+      vertical-align: top;
+    }
+    th {
+      text-align: left;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+    tr:nth-child(even) {
+      background: #020617;
+    }
+
+    /* TAGs com código de cor unificado */
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
       border-radius: 999px;
-      padding: 0.25rem 0.75rem;
       font-size: 0.7rem;
+      border: 1px solid #374151;
+      margin-right: 4px;
+      margin-bottom: 2px;
+      white-space: nowrap;
     }
-    .tag-chip {
-      border-radius: 999px;
-      padding: 0.15rem 0.65rem;
-      font-size: 0.7rem;
-      border-width: 1px;
+    .tag-risk {
+      border-color: #b91c1c;
+      color: #fecaca;
     }
-    .table-scroll {
-      max-height: 260px;
-      overflow: auto;
-      scrollbar-width: thin;
+    .tag-medium {
+      border-color: #d97706;
+      color: #fed7aa;
     }
-    .table-scroll::-webkit-scrollbar {
-      height: 6px;
-      width: 6px;
+    .tag-low {
+      border-color: #15803d;
+      color: #bbf7d0;
     }
-    .table-scroll::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.45);
-      border-radius: 999px;
+
+    .footer {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    .danger {
+      color: #fecaca;
+    }
+
+    /* Contêiner rolável para as mensagens de risco */
+    .risk-table-container {
+      max-height: 340px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+    }
+    .risk-table-container table {
+      margin: 0;
+    }
+
+    /* Texto clicável da mensagem abre popup */
+    .message-preview {
+      cursor: pointer;
+    }
+    .message-preview:hover {
+      text-decoration: underline;
+    }
+
+    /* Modal para mensagem completa */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal.hidden {
+      display: none;
+    }
+    .modal-content {
+      background: #020617;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      max-width: 640px;
+      width: 100%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid #1f2937;
+      font-size: 0.9rem;
+    }
+    .modal-body {
+      padding: 10px 14px;
+      overflow-y: auto;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover {
+      color: #e5e7eb;
+    }
+    .modal-message {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* Gráficos */
+    .chart-panel {
+      margin-top: 8px;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
+    @media (max-width: 900px) {
+      .columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .modal-content {
+        margin: 0 8px;
+      }
     }
   </style>
 </head>
-<body class="text-slate-100">
-  <div class="min-h-screen px-4 py-6 md:px-8 md:py-8">
-    <!-- HEADER -->
-    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-semibold tracking-tight flex items-center gap-2">
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2.166 10 10 2.167 17.834 10 10 17.834 2.166 10Zm2.829 0L10 4.995 14.99 10 10 15.005 4.995 10Z"/>
-            </svg>
-          </span>
-          Dashboard WhatsApp — Neon Analytics
-        </h1>
-        <p class="mt-1 text-xs md:text-sm text-slate-400 max-w-2xl">
-          Monitoramento experimental de mensagens com apoio de IA para identificar indícios de risco emocional,
-          bullying, violência, sexualidade inadequada e apoio positivo. Use sempre como ponto de partida para diálogo.
-        </p>
-      </div>
-      <div class="flex flex-wrap items-center gap-3">
-        <div id="apiStatusBadge" class="badge-pill bg-red-500/10 text-red-300 border border-red-500/40 flex items-center gap-1">
-          <span class="h-2 w-2 rounded-full bg-red-400 animate-pulse"></span>
-          <span class="font-medium text-[0.7rem] tracking-wide uppercase">API: erro de conexão</span>
-        </div>
-        <button id="reloadBtn"
-          class="inline-flex items-center gap-2 rounded-full bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 border border-cyan-400/40 hover:bg-cyan-500/20 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M4 4a7 7 0 0 1 11.313-1.556A.75.75 0 1 1 14.9 3.4 5.5 5.5 0 1 0 15.5 10H14a.75.75 0 0 1 0-1.5h3.25A.75.75 0 0 1 18 9.25V6a.75.75 0 0 1 1.5 0v4.25A.75.75 0 0 1 18.75 11H15.5A7 7 0 1 1 4 4Z" clip-rule="evenodd"/>
-          </svg>
-          Recarregar dados
-        </button>
-      </div>
-    </header>
-
-    <!-- ROW 1: SUMMARY CARDS -->
-    <section class="grid gap-4 md:grid-cols-4 mb-6">
-      <article class="card p-4 md:p-5 flex flex-col justify-between">
-        <div>
-          <div class="card-header text-slate-400 mb-3">Última atualização</div>
-          <div id="lastUpdate" class="text-lg font-semibold text-slate-100">–</div>
-        </div>
-        <p id="lastMessageTime" class="mt-4 text-[0.7rem] text-slate-400">
-          Última mensagem recebida: –
-        </p>
-      </article>
-
-      <article class="card p-4 md:p-5 flex flex-col justify-between">
-        <div>
-          <div class="card-header text-slate-400 mb-3">Mensagens totais</div>
-          <p id="msgToday" class="text-xs text-slate-300 mb-1">Hoje: 0 enviadas • 0 recebidas</p>
-          <p id="msgMonth" class="text-xs text-slate-300 mb-1">Mês atual: 0 mensagens</p>
-          <p id="msgTotal" class="text-xs text-slate-300">Total geral: 0</p>
-        </div>
-      </article>
-
-      <article class="card p-4 md:p-5 flex flex-col justify-between">
-        <div>
-          <div class="card-header text-slate-400 mb-3">Mensageiros de alto risco</div>
-          <div id="highRiskSenders" class="space-y-1 text-xs text-slate-200">
-            <p class="text-slate-500 text-[0.7rem] italic">Carregando…</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="card p-4 md:p-5 flex flex-col justify-between">
-        <div class="card-header text-slate-400 mb-3">Legenda de TAGs</div>
-        <div id="tagLegend" class="flex flex-wrap gap-1.5 text-[0.7rem]"></div>
-      </article>
-    </section>
-
-    <!-- ROW 2: TOP LISTS -->
-    <section class="grid gap-4 md:grid-cols-3 mb-6">
-      <article class="card-soft p-4 md:p-5 flex flex-col">
-        <div class="card-header text-slate-400 mb-3">Top 10 grupos mais ativos</div>
-        <div class="table-scroll">
-          <table class="w-full text-xs">
-            <thead class="sticky top-0 bg-slate-900/80 backdrop-blur">
-              <tr class="text-[0.7rem] text-slate-400">
-                <th class="text-left py-1.5 pr-2 font-medium">Grupo</th>
-                <th class="text-right py-1.5 pl-2 font-medium w-20">Mensagens</th>
-              </tr>
-            </thead>
-            <tbody id="topGroupsBody" class="divide-y divide-slate-800/80"></tbody>
-          </table>
-        </div>
-      </article>
-
-      <article class="card-soft p-4 md:p-5 flex flex-col">
-        <div class="card-header text-slate-400 mb-3">Top 10 DMs mais ativas</div>
-        <div class="table-scroll">
-          <table class="w-full text-xs">
-            <thead class="sticky top-0 bg-slate-900/80 backdrop-blur">
-              <tr class="text-[0.7rem] text-slate-400">
-                <th class="text-left py-1.5 pr-2 font-medium">Contato</th>
-                <th class="text-right py-1.5 pl-2 font-medium w-20">Mensagens</th>
-              </tr>
-            </thead>
-            <tbody id="topDMsBody" class="divide-y divide-slate-800/80"></tbody>
-          </table>
-        </div>
-      </article>
-
-      <article class="card-soft p-4 md:p-5 flex flex-col">
-        <div class="card-header text-slate-400 mb-3">Top 10 canais mais ativos</div>
-        <div class="table-scroll">
-          <table class="w-full text-xs">
-            <thead class="sticky top-0 bg-slate-900/80 backdrop-blur">
-              <tr class="text-[0.7rem] text-slate-400">
-                <th class="text-left py-1.5 pr-2 font-medium">Canal</th>
-                <th class="text-right py-1.5 pl-2 font-medium w-20">Mensagens</th>
-              </tr>
-            </thead>
-            <tbody id="topChannelsBody" class="divide-y divide-slate-800/80"></tbody>
-          </table>
-        </div>
-      </article>
-    </section>
-
-    <!-- ROW 3: RISK TABLES -->
-    <section class="grid gap-4 md:grid-cols-2 mb-8">
-      <article class="card-soft p-4 md:p-5 flex flex-col min-h-[260px]">
-        <div class="flex items-center justify-between mb-3">
-          <div class="card-header text-slate-400">Mensagens com maior risco (IA — Base)</div>
-        </div>
-        <div class="table-scroll">
-          <table class="w-full text-xs">
-            <thead class="sticky top-0 bg-slate-900/80 backdrop-blur">
-              <tr class="text-[0.7rem] text-slate-400">
-                <th class="text-left py-1 pr-2 font-medium w-24">Quando</th>
-                <th class="text-left py-1 px-2 font-medium w-28">Quem</th>
-                <th class="text-left py-1 px-2 font-medium w-32">Chat</th>
-                <th class="text-left py-1 px-2 font-medium">Trecho / interpretação</th>
-                <th class="text-right py-1 pl-2 pr-1 font-medium w-12">Risco</th>
-              </tr>
-            </thead>
-            <tbody id="riskBaseBody" class="divide-y divide-slate-800/80"></tbody>
-          </table>
-        </div>
-        <p class="mt-3 text-[0.65rem] text-slate-500">
-          Este painel lista mensagens com sinal automático de risco pela IA. Não substitui psicólogo nem diálogo em família.
-          Use apenas como ponto de partida, nunca como julgamento definitivo.
-        </p>
-      </article>
-
-      <article class="card-soft p-4 md:p-5 flex flex-col min-h-[260px]">
-        <div class="flex items-center justify-between mb-3">
-          <div class="card-header text-slate-400">Mensagens de risco em contexto (IA — Contextual)</div>
-        </div>
-        <div class="table-scroll">
-          <table class="w-full text-xs">
-            <thead class="sticky top-0 bg-slate-900/80 backdrop-blur">
-              <tr class="text-[0.7rem] text-slate-400">
-                <th class="text-left py-1 pr-2 font-medium w-24">Quando</th>
-                <th class="text-left py-1 px-2 font-medium w-28">Quem</th>
-                <th class="text-left py-1 px-2 font-medium w-32">Chat</th>
-                <th class="text-left py-1 px-2 font-medium">Trecho / interpretação (contexto)</th>
-                <th class="text-right py-1 pl-2 pr-1 font-medium w-12">Risco</th>
-              </tr>
-            </thead>
-            <tbody id="riskCtxBody" class="divide-y divide-slate-800/80"></tbody>
-          </table>
-        </div>
-        <p class="mt-3 text-[0.65rem] text-slate-500">
-          Este painel considera a conversa original (mensagens antes e depois) para reavaliar a gravidade da situação.
-        </p>
-      </article>
-    </section>
-
-    <!-- ROW 4: CHARTS -->
-    <section class="mb-10">
-      <h2 class="text-sm font-semibold text-slate-300 tracking-wide mb-3">
-        Análises gráficas — IA + atividade
-      </h2>
-      <div class="grid gap-4 md:grid-cols-2">
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Mensagens totais por dia</div>
-          <canvas id="chartMessagesPerDay" height="140"></canvas>
-        </article>
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Riscos altos / suicida / depressivo por dia (IA Base)</div>
-          <canvas id="chartRiskPerDay" height="140"></canvas>
-        </article>
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Monitoramento — Fernando</div>
-          <canvas id="chartFernando" height="140"></canvas>
-        </article>
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Monitoramento — Maria Cecília</div>
-          <canvas id="chartMaria" height="140"></canvas>
-        </article>
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Maior ofensor individual</div>
-          <canvas id="chartWorstOffender" height="140"></canvas>
-        </article>
-        <article class="card-soft p-4 md:p-5">
-          <div class="card-header text-slate-400 mb-3">Grupo com mais ofensas</div>
-          <canvas id="chartWorstGroup" height="140"></canvas>
-        </article>
-      </div>
-    </section>
-
-    <footer class="mt-6 pt-4 border-t border-slate-800/60 text-[0.65rem] text-slate-500 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-      <span>
-        Este painel é experimental, desenvolvido para apoio familiar e educativo. As análises de IA não substituem avaliação
-        psicológica profissional.
-      </span>
-      <span class="text-slate-600">
-        © 2025 — Dashboard WhatsApp IA · Neon Analytics
-      </span>
-    </footer>
+<body>
+  <h1>Dashboard WhatsApp – Monitoramento Cecília (versão iA)</h1>
+  <div class="subtitle">
+    Painel privado para acompanhar volume de mensagens e sinais de risco em grupos de adolescentes.
   </div>
 
-  <!-- ====================== -->
-  <!--  JAVASCRIPT PRINCIPAL  -->
-  <!-- ====================== -->
+  <div class="cards">
+    <!-- 1) Última atualização -->
+    <div class="card">
+      <div class="card-title">Última atualização</div>
+      <div class="card-value" id="lastUpdate">–</div>
+      <div class="card-extra">
+        <span id="dateRange">Mensagens entre – e –</span><br />
+        IA aplicada sobre o histórico<br />
+        Atualiza a cada 60s
+      </div>
+    </div>
+
+    <!-- 2) Mensagens totais -->
+    <div class="card">
+      <div class="card-title">Mensagens totais</div>
+      <div class="card-value" id="totalMessages">–</div>
+      <div class="card-extra">
+        Este mês:<br />
+        <strong id="monthSent">–</strong> enviadas<br />
+        <strong id="monthReceived">–</strong> recebidas<br /><br />
+        Hoje:<br />
+        <strong id="todaySent">–</strong> enviadas<br />
+        <strong id="todayReceived">–</strong> recebidas<br /><br />
+        Contatos únicos: <strong id="uniqueSenders">–</strong><br />
+        Grupos/DM únicos: <strong id="uniqueGroups">–</strong>
+      </div>
+    </div>
+
+    <!-- 3) Riscos altos -->
+    <div class="card">
+      <div class="card-title">Riscos altos / suicidas &amp; depressivos</div>
+      <div class="card-value" id="highRiskCount">–</div>
+      <div class="card-extra">
+        <div id="highRiskTagsSummary">
+          <!-- TAGs suicida/depressivo/violencia/autoagressao entram aqui -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4) 5+ Mensageiros de alto risco -->
+    <div class="card">
+      <div class="card-title">5+ Mensageiros de alto risco</div>
+      <div class="card-value">Top 5</div>
+      <div class="card-extra" id="highRiskContacts">
+        –
+      </div>
+    </div>
+
+    <!-- 5) Fernando -->
+    <div class="card">
+      <div class="card-title">Monitoramento – Fernando</div>
+      <div class="card-value" id="fernandoRiskCount">–</div>
+      <div class="card-extra">
+        Mensagens de Fernando: <strong id="fernandoTotal">–</strong><br />
+        Com apoio positivo: <strong id="fernandoPositiveCount">–</strong><br />
+        Principais TAGs:
+        <span id="fernandoTagsSummary">–</span>
+      </div>
+    </div>
+
+    <!-- 6) Maria Cecília -->
+    <div class="card">
+      <div class="card-title">Monitoramento – Maria Cecília</div>
+      <div class="card-value" id="mariaRiskCount">–</div>
+      <div class="card-extra">
+        Mensagens de Maria Cecília: <strong id="mariaTotal">–</strong><br />
+        Com apoio positivo: <strong id="mariaPositiveCount">–</strong><br />
+        Principais TAGs:
+        <span id="mariaTagsSummary">–</span>
+      </div>
+    </div>
+
+    <!-- 7) Maior ofensor individual -->
+    <div class="card">
+      <div class="card-title">Maior ofensor individual</div>
+      <div class="card-value" id="topOffenderName">–</div>
+      <div class="card-extra">
+        Mensagens de risco: <strong id="topOffenderRiskCount">–</strong><br />
+        TAGs principais: <span id="topOffenderTags">–</span>
+      </div>
+    </div>
+
+    <!-- 8) Grupo com mais ofensas -->
+    <div class="card">
+      <div class="card-title">Grupo com mais ofensas</div>
+      <div class="card-value" id="topOffenderGroupName">–</div>
+      <div class="card-extra">
+        Mensagens de risco: <strong id="topOffenderGroupRiskCount">–</strong><br />
+        TAGs principais: <span id="topOffenderGroupTags">–</span>
+      </div>
+    </div>
+
+    <!-- 9) Maior apoiador -->
+    <div class="card">
+      <div class="card-title">Maior apoiador (positivo)</div>
+      <div class="card-value" id="topSupporterName">–</div>
+      <div class="card-extra">
+        Mensagens de apoio: <strong id="topSupporterPositiveCount">–</strong><br />
+        TAGs principais: <span id="topSupporterTags">–</span>
+      </div>
+    </div>
+
+    <!-- 10) Grupo com mais apoio positivo -->
+    <div class="card">
+      <div class="card-title">Grupo com mais apoio positivo</div>
+      <div class="card-value" id="topSupporterGroupName">–</div>
+      <div class="card-extra">
+        Mensagens de apoio: <strong id="topSupporterGroupPositiveCount">–</strong><br />
+        TAGs principais: <span id="topSupporterGroupTags">–</span>
+      </div>
+    </div>
+
+    <!-- 11) 2º Grupo com mais apoio positivo (prioriza My Family) -->
+    <div class="card">
+      <div class="card-title">2º Grupo com mais apoio positivo</div>
+      <div class="card-value" id="secondSupporterGroupName">–</div>
+      <div class="card-extra">
+        Mensagens de apoio: <strong id="secondSupporterGroupPositiveCount">–</strong><br />
+        TAGs principais: <span id="secondSupporterGroupTags">–</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Top 10 remetentes (por quantidade de mensagens)</div>
+        <table id="topSendersTable">
+          <thead>
+            <tr>
+              <th>Remetente</th>
+              <th>Qtd.</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Top 10 grupos mais ativos</div>
+        <table id="topGroupsTable">
+          <thead>
+            <tr>
+              <th>Grupo</th>
+              <th>Qtd.</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Top 10 DMs mais ativas</div>
+        <table id="topDMsTable">
+          <thead>
+            <tr>
+              <th>DM</th>
+              <th>Qtd.</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-title">Mensagens com maior risco (IA)</div>
+
+        <!-- Filtros TAG + contato + grupo na mesma linha -->
+        <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span class="card-extra">TAG:</span>
+          <select id="riskTagFilter">
+            <option value="">Todas</option>
+          </select>
+
+          <span class="card-extra">Contato:</span>
+          <select id="riskContactFilter">
+            <option value="">Todos</option>
+          </select>
+
+          <span class="card-extra">Grupo/DM:</span>
+          <select id="riskGroupFilter">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+        <div class="risk-table-container">
+          <table id="riskMessagesTable">
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Quem</th>
+                <th>Grupo / DM</th>
+                <th>Trecho / avaliação</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="card-extra danger" style="margin-top:6px;">
+          ⚠️ Este painel é apenas um filtro automático com base em IA.
+          Não substitui psicólogo, nem diálogo em família. Use como ponto de partida,
+          nunca como julgamento definitivo.
+        </div>
+      </div>
+
+      <!-- Painel de mensagens em contexto -->
+      <div class="panel">
+        <div class="panel-title">Mensagens de risco em contexto (IA)</div>
+        <div class="card-extra" style="margin-bottom:6px;">
+          Painel alimentado por IA_Classifier_Contextual. Mostra a avaliação contextual e um resumo da janela de conversa até 3 antes e 2 depois.
+        </div>
+
+        <!-- Filtros TAG + contato + grupo -->
+        <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span class="card-extra">TAG:</span>
+          <select id="ctxTagFilter">
+            <option value="">Todas</option>
+          </select>
+
+          <span class="card-extra">Contato:</span>
+          <select id="ctxContactFilter">
+            <option value="">Todos</option>
+          </select>
+
+          <span class="card-extra">Grupo/DM:</span>
+          <select id="ctxGroupFilter">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+        <div class="risk-table-container" style="max-height:260px;">
+          <table id="contextMessagesTable">
+            <thead>
+              <tr>
+                <th>Quando</th>
+                <th>Quem</th>
+                <th>Grupo / DM</th>
+                <th>Contexto</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel de distribuição de mensagens por TAG (IA) -->
+  <div class="panel">
+    <div class="panel-title">Distribuição de mensagens por TAG (IA)</div>
+    <table id="tagDistributionTable">
+      <thead>
+        <tr>
+          <th>TAG</th>
+          <th>Qtd.</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="card-extra" style="margin-top:6px;">
+      Cada TAG representa uma classificação feita pela IA nas mensagens analisadas
+      (depressivo, bullying, apoio_positivo, etc.).
+    </div>
+  </div>
+
+  <!-- ================== NOVA SEÇÃO DE GRÁFICOS ================== -->
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens totais por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTotalMessages"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Riscos altos / suicidas & depressivos por dia</div>
+    <div class="chart-container">
+      <canvas id="chartHighRiskTags"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Monitoramento – Fernando (mensagens de risco por dia)</div>
+    <div class="chart-container">
+      <canvas id="chartFernando"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Monitoramento – Maria Cecília (mensagens de risco por dia)</div>
+    <div class="chart-container">
+      <canvas id="chartMaria"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Maior ofensor individual – mensagens de risco por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTopOffender"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Grupo com mais ofensas – mensagens de risco por dia</div>
+    <div class="chart-container">
+      <canvas id="chartTopOffenderGroup"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens com maior risco (IA) – soma diária dos scores por TAG</div>
+    <div class="chart-container">
+      <canvas id="chartRiskScores"></canvas>
+    </div>
+  </div>
+
+  <div class="panel chart-panel">
+    <div class="panel-title">Mensagens de risco em contexto (IA) – soma diária dos scores por TAG</div>
+    <div class="chart-container">
+      <canvas id="chartCtxScores"></canvas>
+    </div>
+  </div>
+  <!-- ================== FIM DA SEÇÃO DE GRÁFICOS ================== -->
+
+  <div class="footer">
+    Construído para uso privado e educativo. Não substitui acompanhamento profissional,
+    nem deve ser usado para rotular pessoas. O objetivo é ajudar responsáveis a acompanhar
+    a qualidade das interações e abrir conversas quando necessário.
+  </div>
+
+  <!-- Modal para exibir mensagem completa / contexto -->
+  <div id="messageModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modalTitle">Mensagem completa</span>
+        <button id="modalCloseBtn" class="modal-close-btn" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalMeta" class="card-extra"></div>
+        <div id="modalTags"></div>
+        <div id="modalSummary" class="card-extra" style="margin-top:6px;"></div>
+        <div class="modal-message" id="modalMessageText"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
-    // URL do WebApp (modo JSON)
+    // URL DO SEU WEB APP DO APPS SCRIPT
     const API_URL = "https://script.google.com/macros/s/AKfycbxuuyGOKHX1DexWLgizBrfOFAtIAHD4ugcKWV-t8tzm30nx7LraohXr8Mh8XP79NChN/exec";
 
-    // Campos da planilha
-    const COL_TIMESTAMP = "timestamp";
-    const COL_SENDER = "sender";
-    const COL_PHONE = "phone";
-    const COL_CHAT = "group/receiver";
-    const COL_MESSAGE = "message";
-    const COL_STATUS = "status";
-    const COL_HOST = "host";
-    const COL_ORIGEM = "origem";
-    const COL_SENDER_JID = "sender_jid";
-    const COL_CHAT_JID = "chat_jid";
-    const COL_UNIQUE_KEY = "unique_key";
-    const COL_DUPLICATE = "duplicate_flag";
-    const COL_IA_SCORE = "ia_risk_score";
-    const COL_IA_LABELS = "ia_labels";
-    const COL_IA_SUMMARY = "ia_summary";
-    const COL_IA_CTX_SCORE = "ia_risk_score_ctx";
-    const COL_IA_CTX_LABELS = "ia_labels_ctx";
-    const COL_IA_CTX_SUMMARY = "ia_summary_ctx";
-    const COL_IA_CTX_ROWIDS = "ia_ctx_rowids";
+    // Nome exato da coluna de grupo/DM na planilha
+    const GROUP_COL = "group/receiver";
 
-    // Tags oficiais (para legenda)
-    const OFFICIAL_TAGS = [
-      "neutro", "desrespeito", "apoio_positivo", "depressivo",
-      "bullying", "violencia", "controle_ciumento", "sexual_inadequado",
-      "suicida", "autoagressao", "isolamento", "autoimagem_negativa",
-      "ansiedade", "medo", "luto", "linguagem_ofensiva", "risco_social", "outro"
+    // Mapa de nomes "de -> para"
+    const NAME_MAP = {
+      "120363402480279175@g.us": "Revolução dos bichos",
+      "120363220644765994@g.us": "Trabalho de pesquisa",
+      "558182121128@s.whatsapp.net": "Mamãe Gabriela",
+      // adicione mais mapeamentos aqui...
+    };
+    function mapName(raw) {
+      if (!raw) return "";
+      return NAME_MAP[raw] || raw;
+    }
+
+    // Fernando
+    const FERNANDO_PHONE = "558195977127@s.whatsapp.net";
+    const FERNANDO_NAME  = "Fernando";
+
+    // Maria Cecília
+    const MARIA_PHONE = "INSIRA_O_ID_DE_WPP_AQUI@s.whatsapp.net"; // se quiser por JID
+    const MARIA_NAME  = "Maria Cecília";
+
+    const TAGS_RISK_HIGH = ["suicida", "autoagressao", "violencia"];
+    const TAGS_RISK_MEDIUM = [
+      "depressivo",
+      "bullying",
+      "sexual_inadequado",
+      "controle_ciumento",
+      "desrespeito"
+    ];
+    const TAGS_POSITIVE = ["apoio_positivo"];
+    const HIGH_RISK_LABELS_FOR_CARD = ["suicida", "depressivo", "violencia", "autoagressao"];
+
+    const RISK_LABELS_FOR_CHARTS = [
+      "depressivo",
+      "suicida",
+      "autoagressao",
+      "violencia",
+      "desrespeito",
+      "bullying",
+      "sexual_inadequado",
+      "controle_ciumento"
+    ];
+    const RISK_LABELS_SET = new Set(RISK_LABELS_FOR_CHARTS);
+
+    const MIN_CTX_SCORE = 30;
+
+    let riskMessagesGlobal = [];
+    let currentRiskTagFilter = "";
+    let currentRiskContactFilter = "";
+    let currentRiskGroupFilter = "";
+
+    let contextMessagesGlobal = [];
+    let currentCtxTagFilter = "";
+    let currentCtxContactFilter = "";
+    let currentCtxGroupFilter = "";
+
+    let allRowsGlobal = [];
+    let rowByRowIdGlobal = {};
+
+    // REGISTRO DOS GRÁFICOS
+    const chartsRegistry = {};
+
+    // Paleta de cores para TAGs
+    const TAG_COLORS = {
+      suicida: "#fb7185",
+      depressivo: "#60a5fa",
+      violencia: "#facc15",
+      autoagressao: "#f97316",
+      bullying: "#a855f7",
+      sexual_inadequado: "#ec4899",
+      controle_ciumento: "#22c55e",
+      desrespeito: "#e5e7eb",
+      total: "#38bdf8"
+    };
+    const FALLBACK_COLORS = [
+      "#38bdf8", "#a855f7", "#22c55e", "#f97316",
+      "#facc15", "#fb7185", "#e5e7eb", "#818cf8"
     ];
 
-    // Estado em memória
-    let rawData = [];
-    let messages = [];
-
-    // Referências DOM
-    const apiStatusBadge = document.getElementById("apiStatusBadge");
-    const lastUpdateEl = document.getElementById("lastUpdate");
-    const lastMessageTimeEl = document.getElementById("lastMessageTime");
-    const msgTodayEl = document.getElementById("msgToday");
-    const msgMonthEl = document.getElementById("msgMonth");
-    const msgTotalEl = document.getElementById("msgTotal");
-    const highRiskSendersEl = document.getElementById("highRiskSenders");
-    const tagLegendEl = document.getElementById("tagLegend");
-    const topGroupsBody = document.getElementById("topGroupsBody");
-    const topDMsBody = document.getElementById("topDMsBody");
-    const topChannelsBody = document.getElementById("topChannelsBody");
-    const riskBaseBody = document.getElementById("riskBaseBody");
-    const riskCtxBody = document.getElementById("riskCtxBody");
-
-    const reloadBtn = document.getElementById("reloadBtn");
-
-    // Charts
-    let chartMessagesPerDay,
-        chartRiskPerDay,
-        chartFernando,
-        chartMaria,
-        chartWorstOffender,
-        chartWorstGroup;
-
-    // Utilidades ----------------------
-    function setApiStatus(label, ok) {
-      apiStatusBadge.className =
-        "badge-pill flex items-center gap-1 border " +
-        (ok
-          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/40"
-          : "bg-red-500/10 text-red-300 border-red-500/40");
-      apiStatusBadge.innerHTML = `
-        <span class="h-2 w-2 rounded-full ${ok ? "bg-emerald-400" : "bg-red-400"} animate-pulse"></span>
-        <span class="font-medium text-[0.7rem] tracking-wide uppercase">API: ${label}</span>
-      `;
+    function getColorForTag(tag, idx) {
+      const key = String(tag || "").toLowerCase();
+      if (TAG_COLORS[key]) return TAG_COLORS[key];
+      return FALLBACK_COLORS[idx % FALLBACK_COLORS.length];
     }
 
-    function parseTimestampToDate(ts) {
-      if (!ts) return null;
-      if (ts instanceof Date) return ts;
-
-      // tenta "dd/M/yyyy HH:mm:ss"
-      const m = String(ts).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?/);
-      if (m) {
-        const [_, d, mo, y, h, mi, s] = m;
-        return new Date(
-          Number(y),
-          Number(mo) - 1,
-          Number(d),
-          Number(h),
-          Number(mi),
-          s ? Number(s) : 0
-        );
-      }
-      // fallback: Date.parse
-      const d = new Date(ts);
-      return isNaN(d.getTime()) ? null : d;
-    }
-
-    function formatDateKey(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
-
-    function formatDateTimeHuman(date) {
-      if (!date) return "–";
-      const d = String(date.getDate()).padStart(2, "0");
-      const mo = String(date.getMonth() + 1).padStart(2, "0");
-      const y = date.getFullYear();
-      const h = String(date.getHours()).padStart(2, "0");
-      const mi = String(date.getMinutes()).padStart(2, "0");
-      const s = String(date.getSeconds()).padStart(2, "0");
-      return `${d}/${mo}/${y} ${h}:${mi}:${s}`;
-    }
-
-    function toNumberSafe(val, def = 0) {
-      const n = Number(val);
-      return isNaN(n) ? def : n;
+    function isRiskLabelName(label) {
+      return RISK_LABELS_SET.has(String(label || "").toLowerCase());
     }
 
     function parseLabels(str) {
       if (!str) return [];
-      if (Array.isArray(str)) return str;
       return String(str)
-        .split(/[;,]/)
-        .map(t => t.trim())
+        .split(";")
+        .map(s => s.trim())
         .filter(Boolean);
     }
 
-    function normalizeOrigem(val) {
-      const v = String(val || "").toUpperCase();
-      if (v.includes("GRUPO")) return "GRUPO";
-      if (v.includes("DM") || v.includes("PRIVADO")) return "DM";
-      if (v.includes("CANAL")) return "CANAL";
-      return val || "";
+    function hasAnyLabel(labels, targetList) {
+      const set = new Set(targetList.map(l => String(l).toLowerCase()));
+      return labels.some(l => set.has(String(l).toLowerCase()));
     }
 
-    function isDuplicateRow(row) {
-      const f = (row[COL_DUPLICATE] || "").toString().toUpperCase();
-      if (!f) return false;
-      return f === "1" || f === "TRUE" || f === "SIM" || f.includes("DUPLIC");
+    function parseDate(str) {
+      if (!str) return null;
+      const d = new Date(str);
+      if (isNaN(d.getTime())) return null;
+      return d;
     }
 
-    function setLastUpdateNow() {
-      lastUpdateEl.textContent = formatDateTimeHuman(new Date());
+    function classifyDirection(status) {
+      const s = String(status || "").toLowerCase();
+      if (!s) return "unknown";
+      if (s.includes("enviad") || s.includes("sent")) return "sent";
+      if (s.includes("recebid") || s.includes("received")) return "received";
+      if (s.includes("apag") || s.includes("delet")) return "deleted";
+      if (s.includes("edit")) return "edited";
+      return "unknown";
     }
 
-    function setLastMessageTimeFromData() {
-      if (!messages.length) {
-        lastMessageTimeEl.textContent = "Última mensagem recebida: –";
-        return;
+    // --- JSONP loader: o Apps Script responde chamando handleDashboardData(...) ---
+    function injectJsonpScript() {
+      // Remove script anterior se ainda estiver na página
+      const old = document.getElementById("jsonpScript");
+      if (old) {
+        old.remove();
       }
-      const latest = messages.reduce((acc, m) => {
-        if (!acc) return m;
-        if (m.dateObj && m.dateObj > acc.dateObj) return m;
-        return acc;
-      }, null);
-      lastMessageTimeEl.textContent =
-        "Última mensagem recebida: " + formatDateTimeHuman(latest?.dateObj);
+
+      const script = document.createElement("script");
+      script.id = "jsonpScript";
+
+      const callbackName = "handleDashboardData";
+      // Adiciona um timestamp para evitar cache agressivo
+      const ts = Date.now();
+      script.src = `${API_URL}?callback=${callbackName}&ts=${ts}`;
+
+      script.onerror = function (err) {
+        console.error("Erro ao carregar JSONP da API:", err);
+      };
+
+      document.body.appendChild(script);
     }
 
-    // Renderização de legenda de TAGs
-    function renderTagLegend() {
-      tagLegendEl.innerHTML = "";
-      OFFICIAL_TAGS.forEach(tag => {
-        const span = document.createElement("span");
-        span.className =
-          "tag-chip border-slate-500/50 text-slate-200 bg-slate-900/60";
-        span.textContent = tag;
-        tagLegendEl.appendChild(span);
-      });
-    }
-
-    // ================================
-    // CARREGAMENTO DA API
-    // ================================
-    async function fetchDataFromApi() {
-      setApiStatus("carregando...", false);
-
+    function handleDashboardData(data) {
       try {
-        const resp = await fetch(API_URL);
-        if (!resp.ok) {
-          setApiStatus(`erro HTTP ${resp.status}`, false);
-          console.error("Erro na resposta da API:", resp.status, await resp.text());
+        if (!Array.isArray(data)) {
+          console.error("JSONP retornou formato inesperado:", data);
           return;
         }
-
-        const json = await resp.json();
-        if (!Array.isArray(json)) {
-          setApiStatus("formato inválido", false);
-          console.error("Resposta da API não é array:", json);
-          return;
-        }
-
-        rawData = json;
-
-        // Normalização
-        messages = rawData
-          .filter(row => !isDuplicateRow(row))
-          .map(row => {
-            const dateObj = parseTimestampToDate(row[COL_TIMESTAMP]);
-            const origem = normalizeOrigem(row[COL_ORIGEM]);
-            const iaBaseScore = toNumberSafe(row[COL_IA_SCORE], 0);
-            const iaCtxScore = toNumberSafe(row[COL_IA_CTX_SCORE], 0);
-            const iaBaseLabels = parseLabels(row[COL_IA_LABELS]);
-            const iaCtxLabels = parseLabels(row[COL_IA_CTX_LABELS]);
-
-            return {
-              id: row["#"] ?? row.id ?? null,
-              timestampRaw: row[COL_TIMESTAMP] ?? "",
-              dateObj,
-              dateKey: dateObj ? formatDateKey(dateObj) : "",
-              sender: row[COL_SENDER] ?? "",
-              phone: row[COL_PHONE] ?? "",
-              chatName: row[COL_CHAT] ?? "",
-              message: row[COL_MESSAGE] ?? "",
-              status: row[COL_STATUS] ?? "",
-              host: row[COL_HOST] ?? "",
-              origem,
-              sender_jid: row[COL_SENDER_JID] ?? "",
-              chat_jid: row[COL_CHAT_JID] ?? "",
-              unique_key: row[COL_UNIQUE_KEY]
-                ? String(row[COL_UNIQUE_KEY])
-                : "",
-              ia_risk_score: iaBaseScore,
-              ia_labels: iaBaseLabels,
-              ia_summary: row[COL_IA_SUMMARY] ?? "",
-              ia_risk_score_ctx: iaCtxScore,
-              ia_labels_ctx: iaCtxLabels,
-              ia_summary_ctx: row[COL_IA_CTX_SUMMARY] ?? "",
-              ia_ctx_rowids: row[COL_IA_CTX_ROWIDS] ?? ""
-            };
-          })
-          .filter(m => m.dateObj);
-
-        setApiStatus("ok", true);
-        setLastUpdateNow();
-        setLastMessageTimeFromData();
-
-        updateSummaryCards();
-        renderTopLists();
-        renderRiskPanels();
-        renderAllCharts();
-
-        console.log(
-          "Dados carregados e normalizados. Total de mensagens:",
-          messages.length
-        );
-      } catch (err) {
-        console.error("Erro ao carregar dados da API:", err);
-        setApiStatus("erro de conexão", false);
+        updateDashboard(data);
+      } catch (e) {
+        console.error("Erro no handleDashboardData:", e);
       }
     }
 
-    // =========================
-    // RESUMO (cards superiores)
-    // =========================
-    function updateSummaryCards() {
-      const total = messages.length;
-      msgTotalEl.textContent = `Total geral: ${total.toLocaleString("pt-BR")}`;
+    function createTagSpan(label) {
+      if (!label) return null;
+      const normalized = String(label).toLowerCase();
+      // Ocultar completamente TAG "ignorado"
+      if (normalized === "ignorado") return null;
 
-      const now = new Date();
-      const todayKey = formatDateKey(now);
-      const month = now.getMonth();
-      const year = now.getFullYear();
+      const span = document.createElement("span");
+      span.classList.add("tag");
 
-      let todaySent = 0;
-      let todayReceived = 0;
-      let monthCount = 0;
-
-      messages.forEach(m => {
-        if (!m.dateObj) return;
-        const dKey = m.dateKey;
-        if (dKey === todayKey) {
-          if (String(m.status || "").toLowerCase().includes("enviado")) {
-            todaySent++;
-          } else {
-            todayReceived++;
-          }
-        }
-        if (
-          m.dateObj.getFullYear() === year &&
-          m.dateObj.getMonth() === month
-        ) {
-          monthCount++;
-        }
-      });
-
-      msgTodayEl.textContent = `Hoje: ${todaySent} enviadas • ${todayReceived} recebidas`;
-      msgMonthEl.textContent = `Mês atual: ${monthCount} mensagens`;
-
-      // Mensageiros de alto risco (top 5 por soma de scores base + contextual)
-      const riskBySender = new Map();
-      messages.forEach(m => {
-        const score = (m.ia_risk_score || 0) + (m.ia_risk_score_ctx || 0);
-        if (score <= 0) return;
-        const key = m.sender || m.phone || "Desconhecido";
-        const cur = riskBySender.get(key) || { score: 0, labels: {} };
-        cur.score += score;
-        [...m.ia_labels, ...m.ia_labels_ctx].forEach(lbl => {
-          const l = lbl.toLowerCase();
-          if (!l || l === "ignorado") return;
-          cur.labels[l] = (cur.labels[l] || 0) + 1;
-        });
-        riskBySender.set(key, cur);
-      });
-
-      const topRisk = Array.from(riskBySender.entries())
-        .sort((a, b) => b[1].score - a[1].score)
-        .slice(0, 5);
-
-      if (!topRisk.length) {
-        highRiskSendersEl.innerHTML =
-          '<p class="text-[0.7rem] text-slate-500 italic">Nenhum remetente de alto risco identificado até agora.</p>';
+      if (TAGS_RISK_HIGH.includes(label)) {
+        span.classList.add("tag-risk");
+      } else if (TAGS_RISK_MEDIUM.includes(label)) {
+        span.classList.add("tag-medium");
+      } else if (TAGS_POSITIVE.includes(label)) {
+        span.classList.add("tag-low"); // verde / positivo
       } else {
-        highRiskSendersEl.innerHTML = "";
-        topRisk.forEach(([name, info], idx) => {
-          const row = document.createElement("div");
-          row.className = "flex flex-col gap-0.5";
-          const labelParts = Object.entries(info.labels)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 4)
-            .map(([lbl, cnt]) => `${lbl} (${cnt})`);
-          row.innerHTML = `
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-100">${idx + 1}. ${name}</span>
-              <span class="text-[0.65rem] text-slate-400">score: ${Math.round(
-                info.score
-              )}</span>
-            </div>
-            <div class="text-[0.65rem] text-slate-400">
-              ${labelParts.join(" • ") || "–"}
-            </div>
-          `;
-          highRiskSendersEl.appendChild(row);
+        span.classList.add("tag-low");
+      }
+
+      span.textContent = label;
+      return span;
+    }
+
+    function formatTopTagsHtml(tagCounts, maxTags = 4) {
+      const container = document.createElement("span");
+      const entries = Object.entries(tagCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, maxTags);
+
+      if (!entries.length) {
+        container.textContent = "nenhuma TAG registrada";
+        return container;
+      }
+
+      entries.forEach(([label, count], idx) => {
+        const tagSpan = createTagSpan(label);
+        if (tagSpan) {
+          tagSpan.textContent = `${label} (${count})`;
+          container.appendChild(tagSpan);
+        }
+      });
+
+      return container;
+    }
+
+    function showMessageModal({ whenStr, sender, chat, message, labels, summary }) {
+      const modal = document.getElementById("messageModal");
+      const metaEl = document.getElementById("modalMeta");
+      const tagsEl = document.getElementById("modalTags");
+      const summaryEl = document.getElementById("modalSummary");
+      const textEl = document.getElementById("modalMessageText");
+
+      metaEl.textContent = `${whenStr} · ${sender} · ${chat}`;
+      tagsEl.innerHTML = "";
+      (labels || []).forEach(label => {
+        const tagSpan = createTagSpan(label);
+        if (tagSpan) tagsEl.appendChild(tagSpan);
+      });
+
+      summaryEl.textContent = summary ? `Resumo (IA): ${summary}` : "";
+
+      textEl.textContent = message || "";
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeMessageModal() {
+      const modal = document.getElementById("messageModal");
+      modal.classList.add("hidden");
+    }
+
+    function populateRiskTagFilter(riskMessages) {
+      const select = document.getElementById("riskTagFilter");
+      if (!select) return;
+
+      const previous = select.value;
+      const allTags = new Set();
+      riskMessages.forEach(item => {
+        (item.labels || []).forEach(l => {
+          const norm = String(l).toLowerCase();
+          if (norm === "ignorado") return;
+          allTags.add(l);
         });
+      });
+
+      select.innerHTML = '<option value="">Todas</option>';
+      Array.from(allTags)
+        .sort()
+        .forEach(tag => {
+          const opt = document.createElement("option");
+          opt.value = tag;
+          opt.textContent = tag;
+          select.appendChild(opt);
+        });
+
+      if (previous && allTags.has(previous)) {
+        select.value = previous;
+        currentRiskTagFilter = previous;
+      } else {
+        currentRiskTagFilter = "";
       }
     }
 
-    // =====================
-    // LISTAS TOP (grids)
-    // =====================
-    function groupCount(filterFn, keyFn) {
-      const map = new Map();
-      messages.filter(filterFn).forEach(m => {
-        const key = keyFn(m);
-        if (!key) return;
-        map.set(key, (map.get(key) || 0) + 1);
+    function populateCtxTagFilter(contextMessages) {
+      const select = document.getElementById("ctxTagFilter");
+      if (!select) return;
+
+      const previous = select.value;
+      const allTags = new Set();
+      contextMessages.forEach(item => {
+        (item.labelsCtx || []).forEach(l => {
+          const norm = String(l).toLowerCase();
+          if (norm === "ignorado") return;
+          allTags.add(l);
+        });
       });
-      return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+
+      select.innerHTML = '<option value="">Todas</option>';
+      Array.from(allTags)
+        .sort()
+        .forEach(tag => {
+          const opt = document.createElement("option");
+          opt.value = tag;
+          opt.textContent = tag;
+          select.appendChild(opt);
+        });
+
+      if (previous && allTags.has(previous)) {
+        select.value = previous;
+        currentCtxTagFilter = previous;
+      } else {
+        currentCtxTagFilter = "";
+      }
     }
 
-    function renderTopLists() {
-      // grupos
-      const topGroups = groupCount(
-        m => m.origem === "GRUPO",
-        m => m.chatName
-      ).slice(0, 10);
+    function populateSenderGroupFiltersFromMessages(messages, contactSelectId, groupSelectId) {
+      const contactSelect = document.getElementById(contactSelectId);
+      const groupSelect = document.getElementById(groupSelectId);
+      if (!contactSelect || !groupSelect) return;
 
-      topGroupsBody.innerHTML = "";
-      topGroups.forEach(([name, count]) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/60";
-        tr.innerHTML = `
-          <td class="py-1.5 pr-2">${name || "—"}</td>
-          <td class="py-1.5 pl-2 text-right text-slate-300">${count}</td>
-        `;
-        topGroupsBody.appendChild(tr);
+      const senders = new Set();
+      const groups = new Set();
+
+      messages.forEach(item => {
+        const row = item.row;
+        if (row.sender) senders.add(row.sender);
+        if (row[GROUP_COL]) groups.add(row[GROUP_COL]);
       });
 
-      // DMs
-      const topDMs = groupCount(
-        m => m.origem === "DM",
-        m => m.sender
-      ).slice(0, 10);
-      topDMsBody.innerHTML = "";
-      topDMs.forEach(([name, count]) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/60";
-        tr.innerHTML = `
-          <td class="py-1.5 pr-2">${name || "—"}</td>
-          <td class="py-1.5 pl-2 text-right text-slate-300">${count}</td>
-        `;
-        topDMsBody.appendChild(tr);
+      contactSelect.innerHTML = '<option value="">Todos</option>';
+      Array.from(senders)
+        .sort((a, b) => mapName(a).localeCompare(mapName(b), "pt-BR"))
+        .forEach(senderRaw => {
+          const opt = document.createElement("option");
+          opt.value = senderRaw;
+          opt.textContent = mapName(senderRaw) || senderRaw;
+          contactSelect.appendChild(opt);
+        });
+
+      groupSelect.innerHTML = '<option value="">Todos</option>';
+      Array.from(groups)
+        .sort((a, b) => mapName(a).localeCompare(mapName(b), "pt-BR"))
+        .forEach(groupRaw => {
+          const opt = document.createElement("option");
+          opt.value = groupRaw;
+          opt.textContent = mapName(groupRaw) || groupRaw;
+          groupSelect.appendChild(opt);
+        });
+    }
+
+    function renderRiskMessages(riskMessages, filterTag, contactFilter, groupFilter) {
+      const tbodyRisk = document.querySelector("#riskMessagesTable tbody");
+      if (!tbodyRisk) return;
+      tbodyRisk.innerHTML = "";
+
+      const filtered = riskMessages.filter(item => {
+        const row = item.row;
+        if (filterTag && !item.labels.includes(filterTag)) return false;
+        if (contactFilter && row.sender !== contactFilter) return false;
+        if (groupFilter && row[GROUP_COL] !== groupFilter) return false;
+        return true;
       });
 
-      // Canais
-      const topChannels = groupCount(
-        m => m.origem === "CANAL",
-        m => m.chatName
-      ).slice(0, 10);
-      topChannelsBody.innerHTML = "";
-      topChannels.forEach(([name, count]) => {
+      filtered.slice(0, 200).forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+        const labels = item.labels || [];
+
+        const whenStr = d
+          ? d.toLocaleString("pt-BR", { hour12: false })
+          : (row.timestamp || "");
+
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/60";
-        tr.innerHTML = `
-          <td class="py-1.5 pr-2">${name || "—"}</td>
-          <td class="py-1.5 pl-2 text-right text-slate-300">${count}</td>
-        `;
-        topChannelsBody.appendChild(tr);
+
+        const tdWhen = document.createElement("td");
+        tdWhen.textContent = whenStr;
+
+        const tdSender = document.createElement("td");
+        tdSender.textContent = mapName(row.sender || "");
+
+        const tdChat = document.createElement("td");
+        tdChat.textContent = mapName(row[GROUP_COL] || "");
+
+        const tdMsg = document.createElement("td");
+
+        const fullMessage = row.message || "";
+        const displayMessage =
+          fullMessage.length > 256 ? fullMessage.slice(0, 256) + "…" : fullMessage;
+
+        const previewDiv = document.createElement("div");
+        previewDiv.classList.add("message-preview");
+        previewDiv.textContent = displayMessage || "[sem texto]";
+
+        previewDiv.addEventListener("click", () => {
+          showMessageModal({
+            whenStr,
+            sender: mapName(row.sender || ""),
+            chat: mapName(row[GROUP_COL] || ""),
+            message: fullMessage,
+            labels,
+            summary: row.ia_summary || ""
+          });
+        });
+
+        const tagsDiv = document.createElement("div");
+        tagsDiv.style.marginTop = "4px";
+        labels.forEach(label => {
+          const tagSpan = createTagSpan(label);
+          if (tagSpan) tagsDiv.appendChild(tagSpan);
+        });
+
+        const summary = row.ia_summary || "";
+        if (summary) {
+          const summaryDiv = document.createElement("div");
+          summaryDiv.style.marginTop = "2px";
+          summaryDiv.style.fontSize = "0.7rem";
+          summaryDiv.style.color = "#9ca3af";
+          summaryDiv.textContent = summary;
+          tdMsg.appendChild(summaryDiv);
+        }
+
+        tdMsg.appendChild(previewDiv);
+        tdMsg.appendChild(tagsDiv);
+
+        tr.appendChild(tdWhen);
+        tr.appendChild(tdSender);
+        tr.appendChild(tdChat);
+        tr.appendChild(tdMsg);
+
+        tbodyRisk.appendChild(tr);
       });
     }
 
-    // =====================
-    // PAINÉIS DE RISCO
-    // =====================
-    function renderRiskPanels() {
-      const BASE_THRESHOLD = 50;
-      const CTX_THRESHOLD = 50;
+    function renderContextMessages(contextMessages, tagFilter, contactFilter, groupFilter) {
+      const tbody = document.querySelector("#contextMessagesTable tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
 
-      // base
-      const baseMsgs = messages
-        .filter(m => (m.ia_risk_score || 0) >= BASE_THRESHOLD)
-        .sort((a, b) => b.ia_risk_score - a.ia_risk_score)
-        .slice(0, 20);
-
-      riskBaseBody.innerHTML = "";
-      baseMsgs.forEach(m => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/60";
-        tr.innerHTML = `
-          <td class="py-1.5 pr-2 align-top text-slate-300">${formatDateTimeHuman(
-            m.dateObj
-          )}</td>
-          <td class="py-1.5 px-2 align-top text-slate-200">${m.sender ||
-            "—"}</td>
-          <td class="py-1.5 px-2 align-top text-slate-300">${m.chatName ||
-            "—"}</td>
-          <td class="py-1.5 px-2 align-top text-slate-200">
-            <div class="text-slate-100 mb-1">${m.message || "—"}</div>
-            <div class="text-[0.65rem] text-slate-400">${m.ia_summary ||
-              ""}</div>
-          </td>
-          <td class="py-1.5 pl-2 pr-1 align-top text-right text-amber-300 font-semibold">${Math.round(
-            m.ia_risk_score
-          )}</td>
-        `;
-        riskBaseBody.appendChild(tr);
+      const filtered = contextMessages.filter(item => {
+        const row = item.row;
+        if (tagFilter && !(item.labelsCtx || []).includes(tagFilter)) return false;
+        if (contactFilter && row.sender !== contactFilter) return false;
+        if (groupFilter && row[GROUP_COL] !== groupFilter) return false;
+        return true;
       });
 
-      // contextual
-      const ctxMsgs = messages
-        .filter(m => (m.ia_risk_score_ctx || 0) >= CTX_THRESHOLD)
-        .sort((a, b) => b.ia_risk_score_ctx - a.ia_risk_score_ctx)
-        .slice(0, 20);
+      const sorted = filtered
+        .slice()
+        .sort((a, b) => (b.ctxScore || 0) - (a.ctxScore || 0));
 
-      riskCtxBody.innerHTML = "";
-      ctxMsgs.forEach(m => {
+      sorted.slice(0, 100).forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+
+        const whenStr = d
+          ? d.toLocaleString("pt-BR", { hour12: false })
+          : (row.timestamp || "");
+
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-800/60";
-        tr.innerHTML = `
-          <td class="py-1.5 pr-2 align-top text-slate-300">${formatDateTimeHuman(
-            m.dateObj
-          )}</td>
-          <td class="py-1.5 px-2 align-top text-slate-200">${m.sender ||
-            "—"}</td>
-          <td class="py-1.5 px-2 align-top text-slate-300">${m.chatName ||
-            "—"}</td>
-          <td class="py-1.5 px-2 align-top text-slate-200">
-            <div class="text-slate-100 mb-1">${m.message || "—"}</div>
-            <div class="text-[0.65rem] text-slate-400">${m.ia_summary_ctx ||
-              ""}</div>
-          </td>
-          <td class="py-1.5 pl-2 pr-1 align-top text-right text-amber-300 font-semibold">${Math.round(
-            m.ia_risk_score_ctx
-          )}</td>
-        `;
-        riskCtxBody.appendChild(tr);
-      });
-    }
 
-    // =====================
-    // GRÁFICOS (Chart.js)
-    // =====================
-    function buildLineChart(ctx, label, labels, data, color) {
-      return new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label,
-              data,
-              tension: 0.35,
-              borderWidth: 2,
-              pointRadius: 0,
-              fill: false,
-              borderColor: color
+        const tdWhen = document.createElement("td");
+        tdWhen.textContent = whenStr;
+
+        const tdSender = document.createElement("td");
+        tdSender.textContent = mapName(row.sender || "");
+
+        const tdChat = document.createElement("td");
+        tdChat.textContent = mapName(row[GROUP_COL] || "");
+
+        const tdContext = document.createElement("td");
+
+        const summaryText = row.ia_summary_ctx || row.ia_summary || "";
+        const labelsCtx = item.labelsCtx || [];
+
+        const previewDiv = document.createElement("div");
+        previewDiv.classList.add("message-preview");
+        previewDiv.textContent = summaryText || "[sem resumo de contexto]";
+
+        const tagsDiv = document.createElement("div");
+        tagsDiv.style.marginTop = "4px";
+        labelsCtx.forEach(label => {
+          const tagSpan = createTagSpan(label);
+          if (tagSpan) tagsDiv.appendChild(tagSpan);
+        });
+
+        if (!item.ctxRowIds || !item.ctxRowIds.length) {
+          const noCtxDiv = document.createElement("div");
+          noCtxDiv.style.marginTop = "4px";
+          noCtxDiv.style.fontSize = "0.7rem";
+          noCtxDiv.style.color = "#9ca3af";
+          noCtxDiv.textContent = "Sem contexto disponível";
+          tdContext.appendChild(noCtxDiv);
+        }
+
+        previewDiv.addEventListener("click", () => {
+          const ctxLines = [];
+          const ctxIds = item.ctxRowIds || [];
+
+          const targetRowId = String(
+            row.rowid || row["#"] || row.id || ""
+          ).replace(/\.0$/, "");
+
+          ctxIds.forEach(idStr => {
+            const cleanId = String(idStr).replace(/\.0$/, "");
+            const ctxRow = rowByRowIdGlobal[cleanId];
+            if (!ctxRow) return;
+
+            const d2 = parseDate(ctxRow.timestamp);
+            const when2 = d2
+              ? d2.toLocaleString("pt-BR", { hour12: false })
+              : (ctxRow.timestamp || "");
+            const who2 = mapName(ctxRow.sender || "");
+            const msg2 = ctxRow.message || "[sem texto]";
+            const ctxRowId = String(
+              ctxRow.rowid || ctxRow["#"] || ctxRow.id || ""
+            ).replace(/\.0$/, "");
+
+            let line = `${when2} · ${who2}: ${msg2}`;
+            if (ctxRowId && targetRowId && ctxRowId === targetRowId) {
+              line += "  (mensagem analisada)";
             }
-          ]
-        },
+            ctxLines.push(line);
+          });
+
+          const dialogText = ctxLines.length
+            ? ctxLines.join("\n\n")
+            : (row.message || "[sem mensagens de contexto encontradas]");
+
+          showMessageModal({
+            whenStr,
+            sender: mapName(row.sender || ""),
+            chat: mapName(row[GROUP_COL] || ""),
+            message: dialogText,
+            labels: labelsCtx,
+            summary: summaryText
+          });
+        });
+
+        tdContext.appendChild(previewDiv);
+        tdContext.appendChild(tagsDiv);
+
+        tr.appendChild(tdWhen);
+        tr.appendChild(tdSender);
+        tr.appendChild(tdChat);
+        tr.appendChild(tdContext);
+
+        tbody.appendChild(tr);
+      });
+
+      console.log("Mensagens com contexto detectadas:", contextMessages.length, contextMessages);
+    }
+
+    // Helper para labels de datas no eixo X
+    function formatDayKey(dayKey) {
+      // espera "YYYY-MM-DD"
+      const parts = String(dayKey).split("-");
+      if (parts.length === 3) {
+        return parts[2] + "/" + parts[1];
+      }
+      return dayKey;
+    }
+
+    // Converte mapa {dia:{tag:valor}} em labels + datasets do Chart.js
+    function dailyTagMapToChartData(dailyMap) {
+      const days = Object.keys(dailyMap).sort();
+      const labels = days.map(formatDayKey);
+
+      const tagSet = new Set();
+      days.forEach(day => {
+        Object.keys(dailyMap[day]).forEach(tag => tagSet.add(tag));
+      });
+
+      const datasets = Array.from(tagSet).sort().map((tag, idx) => {
+        const data = days.map(day => dailyMap[day][tag] || 0);
+        const color = getColorForTag(tag, idx);
+        return {
+          label: tag,
+          data,
+          tension: 0.3,
+          fill: false,
+          borderColor: color,
+          backgroundColor: color,
+          pointRadius: 2
+        };
+      });
+
+      return { labels, datasets };
+    }
+
+    function upsertLineChart(chartKey, canvasId, labels, datasets, yAxisTitle) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      const baseConfig = {
+        type: "line",
+        data: { labels, datasets },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { display: false },
+            legend: {
+              labels: { color: "#e5e7eb", font: { size: 10 } }
+            },
             tooltip: {
-              mode: "index",
-              intersect: false
+              enabled: true
             }
           },
           scales: {
@@ -786,234 +1167,910 @@
             },
             y: {
               ticks: { color: "#9ca3af" },
-              grid: { color: "rgba(55,65,81,0.5)" }
+              grid: { color: "rgba(148,163,184,0.2)" },
+              title: yAxisTitle
+                ? {
+                    display: true,
+                    text: yAxisTitle,
+                    color: "#9ca3af",
+                    font: { size: 11 }
+                  }
+                : undefined
             }
           }
         }
-      });
+      };
+
+      if (chartsRegistry[chartKey]) {
+        const chart = chartsRegistry[chartKey];
+        chart.data.labels = labels;
+        chart.data.datasets = datasets;
+        chart.update();
+      } else {
+        chartsRegistry[chartKey] = new Chart(ctx, baseConfig);
+      }
     }
 
-    function renderAllCharts() {
-      const byDay = new Map();
-      const riskByDay = new Map();
+    function updateDashboard(data) {
+      const total = data.length;
 
-      messages.forEach(m => {
-        const key = m.dateKey;
-        if (!key) return;
-        byDay.set(key, (byDay.get(key) || 0) + 1);
+      allRowsGlobal = data;
+      rowByRowIdGlobal = {};
 
-        const score =
-          (m.ia_risk_score || 0) +
-          (m.ia_risk_score_ctx || 0);
-        if (score > 0) {
-          riskByDay.set(key, (riskByDay.get(key) || 0) + score);
-        }
-      });
+      const chatMetaById = {};
 
-      const dayLabels = Array.from(byDay.keys()).sort();
-      const msgsData = dayLabels.map(d => byDay.get(d) || 0);
-      const riskData = dayLabels.map(d => riskByDay.get(d) || 0);
+      const senderCount = {};
+      const senderSet = new Set();
+      const chatCountCombined = {};
 
-      const ctx1 = document
-        .getElementById("chartMessagesPerDay")
-        .getContext("2d");
-      const ctx2 = document
-        .getElementById("chartRiskPerDay")
-        .getContext("2d");
+      const tagCounts = {};
+      const fernandoTagCounts = {};
+      const mariaTagCounts = {};
 
-      if (chartMessagesPerDay) chartMessagesPerDay.destroy();
-      if (chartRiskPerDay) chartRiskPerDay.destroy();
+      const offenderPerson = {};
+      const offenderGroup = {};
+      const supporterPerson = {};
+      const supporterGroup = {};
 
-      chartMessagesPerDay = buildLineChart(
-        ctx1,
-        "Mensagens por dia",
-        dayLabels,
-        msgsData,
-        "#38bdf8"
-      );
-      chartRiskPerDay = buildLineChart(
-        ctx2,
-        "Soma dos scores de risco por dia",
-        dayLabels,
-        riskData,
-        "#f97316"
-      );
+      const highRiskContacts = {};
 
-      // Monitoramento Fernando / Maria / ofensor / grupo com mais ofensas:
-      // aqui para não alongar demais, vamos aproveitar os mesmos dados de risco,
-      // focando em subsets simples.
+      let highRiskCount = 0;
+      let suicidaCount = 0;
+      let depressivoCount = 0;
+      let violenciaCount = 0;
+      let autoagressaoCount = 0;
 
-      const fernandoId = "558195977127";
-      const mariaId = "Maria Cecília";
+      let fernandoTotal = 0;
+      let fernandoRiskCount = 0;
+      let fernandoPositiveCount = 0;
 
-      function buildPersonSeries(predicate) {
-        const map = new Map();
-        messages
-          .filter(predicate)
-          .forEach(m => {
-            const k = m.dateKey;
-            if (!k) return;
-            const score =
-              (m.ia_risk_score || 0) +
-              (m.ia_risk_score_ctx || 0);
-            if (score <= 0) return;
-            map.set(k, (map.get(k) || 0) + score);
-          });
-        const labels = Array.from(map.keys()).sort();
-        const data = labels.map(d => map.get(d) || 0);
-        return { labels, data };
+      let mariaTotal = 0;
+      let mariaRiskCount = 0;
+      let mariaPositiveCount = 0;
+
+      const riskMessages = [];
+      const contextMessages = [];
+
+      const now = new Date();
+      const todayKey = now.toISOString().slice(0, 10);
+
+      let monthSent = 0;
+      let monthReceived = 0;
+      let todaySent = 0;
+      let todayReceived = 0;
+
+      let minDate = null;
+      let maxDate = null;
+
+      // Mapas diários para os gráficos
+      const dailyTotals = {};
+      const dailyHighRiskTags = {};
+      const dailyFernandoRiskTags = {};
+      const dailyMariaRiskTags = {};
+
+      function sameMonthYear(d1, d2) {
+        return (
+          d1 &&
+          d2 &&
+          d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth()
+        );
       }
 
-      const fern = buildPersonSeries(
-        m =>
-          (m.phone || "").includes(fernandoId) ||
-          (m.sender || "").includes("Fernando")
-      );
-      const maria = buildPersonSeries(
-        m =>
-          (m.sender || "").includes(mariaId) ||
-          (m.chatName || "").includes(mariaId)
-      );
+      data.forEach(row => {
+        const senderRaw = row.sender || "Desconhecido";
+        const groupRaw  = row[GROUP_COL] || "";
+        const origem    = (row.origem || "").toLowerCase();
+        const chatId    = row.chat_jid || groupRaw || "";
+        const chatLabel = groupRaw || chatId || "Sem grupo";
 
-      const ctxF = document.getElementById("chartFernando").getContext("2d");
-      const ctxM = document.getElementById("chartMaria").getContext("2d");
-
-      if (chartFernando) chartFernando.destroy();
-      if (chartMaria) chartMaria.destroy();
-
-      chartFernando = buildLineChart(
-        ctxF,
-        "Risco diário — Fernando",
-        fern.labels,
-        fern.data,
-        "#a855f7"
-      );
-      chartMaria = buildLineChart(
-        ctxM,
-        "Risco diário — Maria Cecília",
-        maria.labels,
-        maria.data,
-        "#22c55e"
-      );
-
-      // Maior ofensor individual e grupo com mais ofensas
-      const offenseTags = new Set([
-        "desrespeito",
-        "bullying",
-        "violencia",
-        "linguagem_ofensiva",
-        "controle_ciumento"
-      ]);
-
-      const offenderMap = new Map();
-      const groupOffenseMap = new Map();
-
-      messages.forEach(m => {
-        const labels = [
-          ...m.ia_labels,
-          ...m.ia_labels_ctx
-        ].map(l => l.toLowerCase());
-        if (!labels.some(l => offenseTags.has(l))) return;
-
-        const score =
-          (m.ia_risk_score || 0) +
-          (m.ia_risk_score_ctx || 0);
-
-        const senderKey = m.sender || m.phone || "Desconhecido";
-        offenderMap.set(
-          senderKey,
-          (offenderMap.get(senderKey) || 0) + score
-        );
-
-        if (m.origem === "GRUPO") {
-          const gKey = m.chatName || "Grupo";
-          groupOffenseMap.set(
-            gKey,
-            (groupOffenseMap.get(gKey) || 0) + score
-          );
+        // Registro de metadados do chat (origem + nome amigável)
+        if (chatId) {
+          if (!chatMetaById[chatId]) {
+            chatMetaById[chatId] = {
+              origem,
+              label: chatLabel
+            };
+          } else if (!chatMetaById[chatId].label && chatLabel) {
+            chatMetaById[chatId].label = chatLabel;
+          }
         }
-      });
 
-      const worstOffender = Array.from(offenderMap.entries()).sort(
-        (a, b) => b[1] - a[1]
-      )[0];
-      const worstGroup = Array.from(groupOffenseMap.entries()).sort(
-        (a, b) => b[1] - a[1]
-      )[0];
+        const rowIdRaw = row.rowid || row["#"] || row.id;
+        if (rowIdRaw !== undefined && rowIdRaw !== null && rowIdRaw !== "") {
+          const key = String(rowIdRaw).replace(/\.0$/, "");
+          rowByRowIdGlobal[key] = row;
+        }
 
-      function buildSingleSeries(entryMap, key) {
-        const map = new Map();
-        messages.forEach(m => {
-          const labels = [
-            ...m.ia_labels,
-            ...m.ia_labels_ctx
-          ].map(l => l.toLowerCase());
-          if (!labels.some(l => offenseTags.has(l))) return;
-          if (!key(m)) return;
-          const k = m.dateKey;
-          if (!k) return;
-          const s =
-            (m.ia_risk_score || 0) +
-            (m.ia_risk_score_ctx || 0);
-          map.set(k, (map.get(k) || 0) + s);
+        // Duplicadas: não entram em nenhuma contagem / ranking
+        const isDuplicate = !!String(row.duplicate_flag || "").trim();
+        if (isDuplicate) {
+          return;
+        }
+
+        const phone  = row.phone || "";
+        const status = row.status || "";
+
+        const d = parseDate(row.timestamp);
+        let dayKey = null;
+        if (d) {
+          if (!minDate || d < minDate) minDate = d;
+          if (!maxDate || d > maxDate) maxDate = d;
+
+          dayKey = d.toISOString().slice(0, 10);
+
+          const dir = classifyDirection(status);
+
+          if (sameMonthYear(d, now)) {
+            if (dir === "sent") monthSent++;
+            if (dir === "received") monthReceived++;
+          }
+          if (dayKey === todayKey) {
+            if (dir === "sent") todaySent++;
+            if (dir === "received") todayReceived++;
+          }
+
+          // total diário
+          if (dayKey) {
+            dailyTotals[dayKey] = (dailyTotals[dayKey] || 0) + 1;
+          }
+        }
+
+        const senderLower = senderRaw.toLowerCase();
+        const groupLower  = chatLabel.toLowerCase();
+
+        senderSet.add(senderRaw);
+        senderCount[senderRaw] = (senderCount[senderRaw] || 0) + 1;
+        if (chatId) {
+          chatCountCombined[chatId] = (chatCountCombined[chatId] || 0) + 1;
+        }
+
+        const riskScore = Number(row.ia_risk_score || 0);
+        const labels = parseLabels(row.ia_labels);
+
+        labels.forEach(label => {
+          const norm = String(label).toLowerCase();
+          if (norm === "ignorado") return;
+          tagCounts[label] = (tagCounts[label] || 0) + 1;
         });
-        const labels = Array.from(map.keys()).sort();
-        const data = labels.map(d => map.get(d) || 0);
-        return { labels, data };
+
+        const isDepressive = labels.includes("depressivo");
+        const isSuicidal   = labels.includes("suicida");
+        const isSelfHarm   = labels.includes("autoagressao");
+        const isViolent    = labels.includes("violencia");
+        const isHighRisk   = riskScore >= 70 || isSuicidal || isSelfHarm;
+
+        if (isSuicidal) suicidaCount++;
+        if (isDepressive) depressivoCount++;
+        if (isViolent) violenciaCount++;
+        if (isSelfHarm) autoagressaoCount++;
+
+        const isRiskLabel = hasAnyLabel(labels, [
+          "depressivo","suicida","autoagressao","violencia",
+          "desrespeito","bullying","sexual_inadequado","controle_ciumento"
+        ]);
+        const isPositive  = labels.includes("apoio_positivo");
+
+        if (isHighRisk) {
+          highRiskCount++;
+          if (dayKey) {
+            if (!dailyHighRiskTags[dayKey]) dailyHighRiskTags[dayKey] = {};
+            HIGH_RISK_LABELS_FOR_CARD.forEach(tag => {
+              if (labels.includes(tag)) {
+                dailyHighRiskTags[dayKey][tag] =
+                  (dailyHighRiskTags[dayKey][tag] || 0) + 1;
+              }
+            });
+          }
+        }
+
+        if (hasAnyLabel(labels, HIGH_RISK_LABELS_FOR_CARD)) {
+          highRiskContacts[senderRaw] = (highRiskContacts[senderRaw] || 0) + 1;
+        }
+
+        const isFernando =
+          phone === FERNANDO_PHONE ||
+          senderLower.includes(FERNANDO_NAME.toLowerCase()) ||
+          groupLower.includes(FERNANDO_NAME.toLowerCase());
+
+        const isMaria =
+          phone === MARIA_PHONE ||
+          senderLower.includes(MARIA_NAME.toLowerCase()) ||
+          groupLower.includes(MARIA_NAME.toLowerCase());
+
+        if (isFernando) {
+          fernandoTotal++;
+          if (isRiskLabel) fernandoRiskCount++;
+          if (isPositive)  fernandoPositiveCount++;
+          labels.forEach(label => {
+            const norm = String(label).toLowerCase();
+            if (norm === "ignorado") return;
+            fernandoTagCounts[label] = (fernandoTagCounts[label] || 0) + 1;
+          });
+
+          if (dayKey && isRiskLabel) {
+            if (!dailyFernandoRiskTags[dayKey]) dailyFernandoRiskTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyFernandoRiskTags[dayKey][key] =
+                (dailyFernandoRiskTags[dayKey][key] || 0) + 1;
+            });
+          }
+        }
+
+        if (isMaria) {
+          mariaTotal++;
+          if (isRiskLabel) mariaRiskCount++;
+          if (isPositive)  mariaPositiveCount++;
+          labels.forEach(label => {
+            const norm = String(label).toLowerCase();
+            if (norm === "ignorado") return;
+            mariaTagCounts[label] = (mariaTagCounts[label] || 0) + 1;
+          });
+
+          if (dayKey && isRiskLabel) {
+            if (!dailyMariaRiskTags[dayKey]) dailyMariaRiskTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyMariaRiskTags[dayKey][key] =
+                (dailyMariaRiskTags[dayKey][key] || 0) + 1;
+            });
+          }
+        }
+
+        if (isRiskLabel) {
+          offenderPerson[senderRaw] = offenderPerson[senderRaw] || { count: 0, tags: {} };
+          offenderPerson[senderRaw].count++;
+          labels.forEach(l => {
+            const norm = String(l).toLowerCase();
+            if (norm === "ignorado") return;
+            offenderPerson[senderRaw].tags[l] =
+              (offenderPerson[senderRaw].tags[l] || 0) + 1;
+          });
+
+          if (chatId) {
+            offenderGroup[chatId] = offenderGroup[chatId] || { count: 0, tags: {} };
+            offenderGroup[chatId].count++;
+            labels.forEach(l => {
+              const norm = String(l).toLowerCase();
+              if (norm === "ignorado") return;
+              offenderGroup[chatId].tags[l] =
+                (offenderGroup[chatId].tags[l] || 0) + 1;
+            });
+          }
+        }
+
+        if (isPositive) {
+          supporterPerson[senderRaw] = supporterPerson[senderRaw] || { count: 0, tags: {} };
+          supporterPerson[senderRaw].count++;
+          labels.forEach(l => {
+            const norm = String(l).toLowerCase();
+            if (norm === "ignorado") return;
+            supporterPerson[senderRaw].tags[l] =
+              (supporterPerson[senderRaw].tags[l] || 0) + 1;
+          });
+
+          if (chatId) {
+            supporterGroup[chatId] = supporterGroup[chatId] || { count: 0, tags: {} };
+            supporterGroup[chatId].count++;
+            labels.forEach(l => {
+              const norm = String(l).toLowerCase();
+              if (norm === "ignorado") return;
+              supporterGroup[chatId].tags[l] =
+                (supporterGroup[chatId].tags[l] || 0) + 1;
+            });
+          }
+        }
+
+        const isModerateOrHigh =
+          riskScore >= 50 ||
+          hasAnyLabel(labels, [
+            "depressivo","suicida","autoagressao","violencia",
+            "desrespeito","bullying","sexual_inadequado","controle_ciumento"
+          ]);
+
+        if (isModerateOrHigh) {
+          riskMessages.push({
+            row,
+            score: riskScore,
+            labels
+          });
+        }
+
+        // CONTEXTO
+        const ctxScore   = Number(row.ia_risk_score_ctx || 0);
+        const ctxLabels  = parseLabels(row.ia_labels_ctx);
+        const ctxSummary = row.ia_summary_ctx || "";
+        const ctxRowStr  = row.ia_ctx_rowids || "";
+
+        const hasCtxRowIds = String(ctxRowStr || "")
+          .split(/[,\s]+/)
+          .map(s => s.trim())
+          .filter(Boolean).length > 0;
+
+        if (ctxScore >= MIN_CTX_SCORE || ctxLabels.length || ctxSummary || hasCtxRowIds) {
+          const ctxRowIds = String(ctxRowStr || "")
+            .split(/[,\s]+/)
+            .map(s => s.trim())
+            .filter(Boolean)
+            .map(s => s.replace(/\.0$/, ""));
+
+          contextMessages.push({
+            row,
+            labelsCtx: ctxLabels,
+            ctxScore,
+            ctxRowIds
+          });
+        }
+      });
+
+      // Separação grupo x DM usando "origem" + chat_jid
+      const groupCount = {};
+      const dmCount = {};
+
+      Object.entries(chatCountCombined).forEach(([chatId, count]) => {
+        const meta = chatMetaById[chatId] || {};
+        const origem = (meta.origem || "").toLowerCase();
+        if (origem === "grupo") {
+          groupCount[chatId] = count;
+        } else if (origem === "dm") {
+          dmCount[chatId] = count;
+        }
+        // canais ficam de fora por enquanto
+      });
+
+      // Cards principais
+      document.getElementById("totalMessages").textContent = total.toString();
+      const uniqueChats = new Set([
+        ...Object.keys(groupCount),
+        ...Object.keys(dmCount)
+      ]);
+      document.getElementById("uniqueSenders").textContent =
+        Object.keys(senderCount).length.toString();
+      document.getElementById("uniqueGroups").textContent =
+        uniqueChats.size.toString();
+
+      document.getElementById("monthSent").textContent = monthSent.toString();
+      document.getElementById("monthReceived").textContent = monthReceived.toString();
+      document.getElementById("todaySent").textContent = todaySent.toString();
+      document.getElementById("todayReceived").textContent = todayReceived.toString();
+
+      document.getElementById("highRiskCount").textContent =
+        highRiskCount.toString();
+
+      // TAGs de alto risco (suicida/depressivo/violencia/autoagressao)
+      const highRiskTagsSummaryEl = document.getElementById("highRiskTagsSummary");
+      if (highRiskTagsSummaryEl) {
+        highRiskTagsSummaryEl.innerHTML = "";
+        const info = [
+          ["suicida", suicidaCount],
+          ["depressivo", depressivoCount],
+          ["violencia", violenciaCount],
+          ["autoagressao", autoagressaoCount]
+        ];
+        info.forEach(([label, count]) => {
+          const tagSpan = createTagSpan(label);
+          if (tagSpan) {
+            tagSpan.textContent = `${label} (${count})`;
+            highRiskTagsSummaryEl.appendChild(tagSpan);
+          }
+        });
       }
 
-      const ctxWO = document
-        .getElementById("chartWorstOffender")
-        .getContext("2d");
-      const ctxWG = document
-        .getElementById("chartWorstGroup")
-        .getContext("2d");
+      document.getElementById("fernandoTotal").textContent =
+        fernandoTotal.toString();
+      document.getElementById("fernandoRiskCount").textContent =
+        fernandoRiskCount.toString();
+      document.getElementById("fernandoPositiveCount").textContent =
+        fernandoPositiveCount.toString();
 
-      if (chartWorstOffender) chartWorstOffender.destroy();
-      if (chartWorstGroup) chartWorstGroup.destroy();
+      const fernandoTagsSummaryEl =
+        document.getElementById("fernandoTagsSummary");
+      fernandoTagsSummaryEl.innerHTML = "";
+      fernandoTagsSummaryEl.appendChild(
+        formatTopTagsHtml(fernandoTagCounts)
+      );
 
-      if (worstOffender) {
-        const series = buildSingleSeries(
-          offenderMap,
-          m => (m.sender || m.phone || "Desconhecido") === worstOffender[0]
-        );
-        chartWorstOffender = buildLineChart(
-          ctxWO,
-          `Ofensor: ${worstOffender[0]}`,
-          series.labels,
-          series.data,
-          "#f97316"
-        );
+      document.getElementById("mariaTotal").textContent =
+        mariaTotal.toString();
+      document.getElementById("mariaRiskCount").textContent =
+        mariaRiskCount.toString();
+      document.getElementById("mariaPositiveCount").textContent =
+        mariaPositiveCount.toString();
+
+      const mariaTagsSummaryEl = document.getElementById("mariaTagsSummary");
+      mariaTagsSummaryEl.innerHTML = "";
+      mariaTagsSummaryEl.appendChild(formatTopTagsHtml(mariaTagCounts));
+
+      // Card "Última atualização"
+      const lastUpdateEl = document.getElementById("lastUpdate");
+      const dateRangeEl = document.getElementById("dateRange");
+      if (lastUpdateEl) {
+        lastUpdateEl.textContent =
+          now.toLocaleString("pt-BR", { hour12: false });
+      }
+      if (dateRangeEl) {
+        if (minDate && maxDate) {
+          const fmt = d =>
+            d.toLocaleDateString("pt-BR", {
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            });
+          dateRangeEl.textContent =
+            "Mensagens entre " + fmt(minDate) + " e " + fmt(maxDate);
+        } else {
+          dateRangeEl.textContent = "Intervalo de datas não disponível";
+        }
       }
 
-      if (worstGroup) {
-        const series = buildSingleSeries(
-          groupOffenseMap,
-          m => (m.chatName || "Grupo") === worstGroup[0]
-        );
-        chartWorstGroup = buildLineChart(
-          ctxWG,
-          `Grupo: ${worstGroup[0]}`,
-          series.labels,
-          series.data,
-          "#eab308"
-        );
+      // Função auxiliar para pegar top
+      function pickTop(mapObj) {
+        let bestKey = null;
+        let best = null;
+        Object.entries(mapObj).forEach(([key, value]) => {
+          if (!best || value.count > best.count) {
+            bestKey = key;
+            best = value;
+          }
+        });
+        return bestKey ? { key: bestKey, ...best } : null;
+      }
+
+      const offenderGroupOnly = {};
+      Object.entries(offenderGroup).forEach(([chatId, dataVal]) => {
+        if (groupCount[chatId]) {
+          offenderGroupOnly[chatId] = dataVal;
+        }
+      });
+
+      const supporterGroupOnly = {};
+      Object.entries(supporterGroup).forEach(([chatId, dataVal]) => {
+        if (groupCount[chatId]) {
+          supporterGroupOnly[chatId] = dataVal;
+        }
+      });
+
+      const topOffenderPerson   = pickTop(offenderPerson);
+      const topOffenderGroup    = pickTop(offenderGroupOnly);
+      const topSupporterPerson  = pickTop(supporterPerson);
+
+      // Para grupos de apoio positivo, vamos pegar array ordenado
+      const supporterGroupsArray = Object.entries(supporterGroupOnly)
+        .sort((a, b) => b[1].count - a[1].count);
+
+      const topSupporterGroup =
+        supporterGroupsArray.length > 0
+          ? { key: supporterGroupsArray[0][0], ...supporterGroupsArray[0][1] }
+          : null;
+
+      let secondSupporterGroup = null;
+      // Primeiro, tenta achar explicitamente "My Family"
+      for (const [chatId, val] of supporterGroupsArray) {
+        const meta = chatMetaById[chatId] || {};
+        const mapped = mapName(meta.label || chatId);
+        if (mapped === "My Family") {
+          secondSupporterGroup = { key: chatId, ...val };
+          break;
+        }
+      }
+      // Se não achar My Family, pega o segundo da lista
+      if (!secondSupporterGroup && supporterGroupsArray.length > 1) {
+        const second = supporterGroupsArray[1];
+        secondSupporterGroup = {
+          key: second[0],
+          ...second[1]
+        };
+      }
+
+      if (topOffenderPerson) {
+        document.getElementById("topOffenderName").textContent =
+          mapName(topOffenderPerson.key);
+        document.getElementById("topOffenderRiskCount").textContent =
+          topOffenderPerson.count.toString();
+        const el = document.getElementById("topOffenderTags");
+        el.innerHTML = "";
+        el.appendChild(formatTopTagsHtml(topOffenderPerson.tags));
+      }
+
+      if (topOffenderGroup) {
+        const meta = chatMetaById[topOffenderGroup.key] || {};
+        document.getElementById("topOffenderGroupName").textContent =
+          mapName(meta.label || topOffenderGroup.key);
+        document.getElementById("topOffenderGroupRiskCount").textContent =
+          topOffenderGroup.count.toString();
+        const el = document.getElementById("topOffenderGroupTags");
+        el.innerHTML = "";
+        el.appendChild(formatTopTagsHtml(topOffenderGroup.tags));
+      }
+
+      if (topSupporterPerson) {
+        document.getElementById("topSupporterName").textContent =
+          mapName(topSupporterPerson.key);
+        document.getElementById("topSupporterPositiveCount").textContent =
+          topSupporterPerson.count.toString();
+        const el = document.getElementById("topSupporterTags");
+        el.innerHTML = "";
+        el.appendChild(formatTopTagsHtml(topSupporterPerson.tags));
+      }
+
+      if (topSupporterGroup) {
+        const meta = chatMetaById[topSupporterGroup.key] || {};
+        document.getElementById("topSupporterGroupName").textContent =
+          mapName(meta.label || topSupporterGroup.key);
+        document.getElementById("topSupporterGroupPositiveCount").textContent =
+          topSupporterGroup.count.toString();
+        const el = document.getElementById("topSupporterGroupTags");
+        el.innerHTML = "";
+        el.appendChild(formatTopTagsHtml(topSupporterGroup.tags));
+      }
+
+      if (secondSupporterGroup) {
+        const meta = chatMetaById[secondSupporterGroup.key] || {};
+        document.getElementById("secondSupporterGroupName").textContent =
+          mapName(meta.label || secondSupporterGroup.key);
+        document.getElementById("secondSupporterGroupPositiveCount").textContent =
+          secondSupporterGroup.count.toString();
+        const el = document.getElementById("secondSupporterGroupTags");
+        el.innerHTML = "";
+        el.appendChild(formatTopTagsHtml(secondSupporterGroup.tags));
+      }
+
+      // Card 5+ Mensageiros de alto risco
+      const highRiskContactsEl = document.getElementById("highRiskContacts");
+      if (highRiskContactsEl) {
+        highRiskContactsEl.innerHTML = "";
+        const entries = Object.entries(highRiskContacts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+        if (!entries.length) {
+          highRiskContactsEl.textContent = "nenhum contato recorrente";
+        } else {
+          entries.forEach(([name, count], idx) => {
+            const div = document.createElement("div");
+            div.textContent = `${idx + 1}. ${mapName(name) || name} (${count})`;
+            highRiskContactsEl.appendChild(div);
+          });
+        }
+      }
+
+      // Top remetentes
+      const sendersArray = Object.entries(senderCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      const tbodySenders = document.querySelector("#topSendersTable tbody");
+      tbodySenders.innerHTML = "";
+      sendersArray.forEach(([name, count]) => {
+        const tr = document.createElement("tr");
+        const pct = total ? ((count / total) * 100).toFixed(1) : "0.0";
+        tr.innerHTML = `
+          <td>${mapName(name)}</td>
+          <td>${count}</td>
+          <td>${pct}%</td>
+        `;
+        tbodySenders.appendChild(tr);
+      });
+
+      // Top grupos mais ativos (origem === grupo)
+      const groupsArray = Object.entries(groupCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      const tbodyGroups = document.querySelector("#topGroupsTable tbody");
+      tbodyGroups.innerHTML = "";
+      groupsArray.forEach(([chatId, count]) => {
+        const meta = chatMetaById[chatId] || {};
+        const label = mapName(meta.label || chatId);
+        const pct = total ? ((count / total) * 100).toFixed(1) : "0.0";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${label}</td>
+          <td>${count}</td>
+          <td>${pct}%</td>
+        `;
+        tbodyGroups.appendChild(tr);
+      });
+
+      // Top DMs mais ativas (origem === dm)
+      const dmsArray = Object.entries(dmCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      const tbodyDMs = document.querySelector("#topDMsTable tbody");
+      tbodyDMs.innerHTML = "";
+      dmsArray.forEach(([chatId, count]) => {
+        const meta = chatMetaById[chatId] || {};
+        const label = mapName(meta.label || chatId);
+        const pct = total ? ((count / total) * 100).toFixed(1) : "0.0";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${label}</td>
+          <td>${count}</td>
+          <td>${pct}%</td>
+        `;
+        tbodyDMs.appendChild(tr);
+      });
+
+      // Mensagens de maior risco
+      riskMessages.sort((a, b) => b.score - a.score);
+      riskMessagesGlobal = riskMessages;
+
+      populateRiskTagFilter(riskMessagesGlobal);
+      populateSenderGroupFiltersFromMessages(
+        riskMessagesGlobal,
+        "riskContactFilter",
+        "riskGroupFilter"
+      );
+      renderRiskMessages(
+        riskMessagesGlobal,
+        currentRiskTagFilter,
+        currentRiskContactFilter,
+        currentRiskGroupFilter
+      );
+
+      // Mensagens em contexto
+      contextMessagesGlobal = contextMessages;
+      populateCtxTagFilter(contextMessagesGlobal);
+      populateSenderGroupFiltersFromMessages(
+        contextMessagesGlobal,
+        "ctxContactFilter",
+        "ctxGroupFilter"
+      );
+      renderContextMessages(
+        contextMessagesGlobal,
+        currentCtxTagFilter,
+        currentCtxContactFilter,
+        currentCtxGroupFilter
+      );
+
+      // Distribuição de TAGs
+      const tbodyTags = document.querySelector("#tagDistributionTable tbody");
+      if (tbodyTags) {
+        tbodyTags.innerHTML = "";
+        const tagsArray = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+        tagsArray.forEach(([tag, count]) => {
+          const tr = document.createElement("tr");
+          const pct = total ? ((count / total) * 100).toFixed(1) : "0.0";
+          const tdTag = document.createElement("td");
+          const badge = createTagSpan(tag);
+          if (badge) tdTag.appendChild(badge);
+
+          const tdCount = document.createElement("td");
+          tdCount.textContent = count.toString();
+
+          const tdPct = document.createElement("td");
+          tdPct.textContent = pct + "%";
+
+          tr.appendChild(tdTag);
+          tr.appendChild(tdCount);
+          tr.appendChild(tdPct);
+          tbodyTags.appendChild(tr);
+        });
+      }
+
+      // =========================
+      //   CONSTRUÇÃO DOS GRÁFICOS
+      // =========================
+
+      // 1) Total de mensagens
+      const dailyTotalsWrapped = {};
+      Object.keys(dailyTotals).forEach(day => {
+        dailyTotalsWrapped[day] = { total: dailyTotals[day] };
+      });
+      if (Object.keys(dailyTotalsWrapped).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTotalsWrapped);
+        datasets.forEach(ds => { ds.label = "Total"; });
+        upsertLineChart("chartTotalMessages", "chartTotalMessages", labels, datasets, "Mensagens por dia");
+      }
+
+      // 2) Riscos altos / suicidas & depressivos
+      if (Object.keys(dailyHighRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyHighRiskTags);
+        upsertLineChart("chartHighRiskTags", "chartHighRiskTags", labels, datasets, "Mensagens de alto risco por dia");
+      }
+
+      // 3) 4) Fernando / Maria – mapas já montados (contagem de mensagens de risco por TAG)
+      if (Object.keys(dailyFernandoRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyFernandoRiskTags);
+        upsertLineChart("chartFernando", "chartFernando", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      if (Object.keys(dailyMariaRiskTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyMariaRiskTags);
+        upsertLineChart("chartMaria", "chartMaria", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      // 5) 6) Maior ofensor individual / Grupo com mais ofensas
+      const dailyTopOffenderTags = {};
+      const dailyTopOffenderGroupTags = {};
+
+      if (topOffenderPerson || topOffenderGroup) {
+        data.forEach(row => {
+          const d = parseDate(row.timestamp);
+          if (!d) return;
+
+          // ignorar duplicatas nos gráficos também
+          const isDuplicate = !!String(row.duplicate_flag || "").trim();
+          if (isDuplicate) return;
+
+          const dayKey = d.toISOString().slice(0, 10);
+          const labels = parseLabels(row.ia_labels);
+          const isRisk = hasAnyLabel(labels, [
+            "depressivo","suicida","autoagressao","violencia",
+            "desrespeito","bullying","sexual_inadequado","controle_ciumento"
+          ]);
+          if (!isRisk) return;
+
+          const chatId = row.chat_jid || row[GROUP_COL] || "";
+
+          if (topOffenderPerson && row.sender === topOffenderPerson.key) {
+            if (!dailyTopOffenderTags[dayKey]) dailyTopOffenderTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyTopOffenderTags[dayKey][key] =
+                (dailyTopOffenderTags[dayKey][key] || 0) + 1;
+            });
+          }
+
+          if (topOffenderGroup && chatId === topOffenderGroup.key) {
+            if (!dailyTopOffenderGroupTags[dayKey]) dailyTopOffenderGroupTags[dayKey] = {};
+            labels.forEach(l => {
+              if (!isRiskLabelName(l)) return;
+              const key = String(l).toLowerCase();
+              dailyTopOffenderGroupTags[dayKey][key] =
+                (dailyTopOffenderGroupTags[dayKey][key] || 0) + 1;
+            });
+          }
+        });
+      }
+
+      if (Object.keys(dailyTopOffenderTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTopOffenderTags);
+        upsertLineChart("chartTopOffender", "chartTopOffender", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      if (Object.keys(dailyTopOffenderGroupTags).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyTopOffenderGroupTags);
+        upsertLineChart("chartTopOffenderGroup", "chartTopOffenderGroup", labels, datasets, "Mensagens de risco por dia");
+      }
+
+      // 7) Mensagens com maior risco (IA) – soma diária dos scores por TAG
+      const dailyRiskScores = {};
+      riskMessagesGlobal.forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+        if (!d) return;
+
+        const isDuplicate = !!String(row.duplicate_flag || "").trim();
+        if (isDuplicate) return;
+
+        const dayKey = d.toISOString().slice(0, 10);
+        const score = Number(item.score || 0);
+        if (!score) return;
+        const labels = item.labels || [];
+        labels.forEach(l => {
+          if (!isRiskLabelName(l)) return;
+          const key = String(l).toLowerCase();
+          if (!dailyRiskScores[dayKey]) dailyRiskScores[dayKey] = {};
+          dailyRiskScores[dayKey][key] =
+            (dailyRiskScores[dayKey][key] || 0) + score;
+        });
+      });
+
+      if (Object.keys(dailyRiskScores).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyRiskScores);
+        upsertLineChart("chartRiskScores", "chartRiskScores", labels, datasets, "Soma dos scores por dia");
+      }
+
+      // 8) Mensagens com maior risco em contexto (IA) – soma diária dos scores por TAG
+      const dailyCtxScores = {};
+      contextMessagesGlobal.forEach(item => {
+        const row = item.row;
+        const d = parseDate(row.timestamp);
+        if (!d) return;
+
+        const isDuplicate = !!String(row.duplicate_flag || "").trim();
+        if (isDuplicate) return;
+
+        const dayKey = d.toISOString().slice(0, 10);
+        const score = Number(item.ctxScore || 0);
+        if (!score) return;
+        const labelsCtx = item.labelsCtx || [];
+        labelsCtx.forEach(l => {
+          if (!isRiskLabelName(l)) return;
+          const key = String(l).toLowerCase();
+          if (!dailyCtxScores[dayKey]) dailyCtxScores[dayKey] = {};
+          dailyCtxScores[dayKey][key] =
+            (dailyCtxScores[dayKey][key] || 0) + score;
+        });
+      });
+
+      if (Object.keys(dailyCtxScores).length) {
+        const { labels, datasets } = dailyTagMapToChartData(dailyCtxScores);
+        upsertLineChart("chartCtxScores", "chartCtxScores", labels, datasets, "Soma dos scores de contexto por dia");
       }
     }
 
-    // =====================
-    // INICIALIZAÇÃO
-    // =====================
-    function init() {
-      renderTagLegend();
-      fetchDataFromApi();
+    function refresh() {
+      // Dispara um novo carregamento via JSONP
+      injectJsonpScript();
     }
 
-    reloadBtn.addEventListener("click", () => {
-      fetchDataFromApi();
+    document.getElementById("modalCloseBtn").addEventListener("click", closeMessageModal);
+    document.getElementById("messageModal").addEventListener("click", (e) => {
+      if (e.target.id === "messageModal") {
+        closeMessageModal();
+      }
     });
 
-    document.addEventListener("DOMContentLoaded", init);
+    const riskTagFilterSelect = document.getElementById("riskTagFilter");
+    riskTagFilterSelect.addEventListener("change", () => {
+      currentRiskTagFilter = riskTagFilterSelect.value;
+      renderRiskMessages(
+        riskMessagesGlobal,
+        currentRiskTagFilter,
+        currentRiskContactFilter,
+        currentRiskGroupFilter
+      );
+    });
+
+    const riskContactFilterSelect = document.getElementById("riskContactFilter");
+    const riskGroupFilterSelect = document.getElementById("riskGroupFilter");
+    riskContactFilterSelect.addEventListener("change", () => {
+      currentRiskContactFilter = riskContactFilterSelect.value;
+      renderRiskMessages(
+        riskMessagesGlobal,
+        currentRiskTagFilter,
+        currentRiskContactFilter,
+        currentRiskGroupFilter
+      );
+    });
+    riskGroupFilterSelect.addEventListener("change", () => {
+      currentRiskGroupFilter = riskGroupFilterSelect.value;
+      renderRiskMessages(
+        riskMessagesGlobal,
+        currentRiskTagFilter,
+        currentRiskContactFilter,
+        currentRiskGroupFilter
+      );
+    });
+
+    const ctxTagFilterSelect = document.getElementById("ctxTagFilter");
+    const ctxContactFilterSelect = document.getElementById("ctxContactFilter");
+    const ctxGroupFilterSelect = document.getElementById("ctxGroupFilter");
+
+    ctxTagFilterSelect.addEventListener("change", () => {
+      currentCtxTagFilter = ctxTagFilterSelect.value;
+      renderContextMessages(
+        contextMessagesGlobal,
+        currentCtxTagFilter,
+        currentCtxContactFilter,
+        currentCtxGroupFilter
+      );
+    });
+
+    ctxContactFilterSelect.addEventListener("change", () => {
+      currentCtxContactFilter = ctxContactFilterSelect.value;
+      renderContextMessages(
+        contextMessagesGlobal,
+        currentCtxTagFilter,
+        currentCtxContactFilter,
+        currentCtxGroupFilter
+      );
+    });
+    ctxGroupFilterSelect.addEventListener("change", () => {
+      currentCtxGroupFilter = ctxGroupFilterSelect.value;
+      renderContextMessages(
+        contextMessagesGlobal,
+        currentCtxTagFilter,
+        currentCtxContactFilter,
+        currentCtxGroupFilter
+      );
+    });
+
+    refresh();
+    setInterval(refresh, 60000);
   </script>
 </body>
 </html>
