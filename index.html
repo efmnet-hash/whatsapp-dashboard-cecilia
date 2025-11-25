@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard WhatsApp – Cecília</title>
@@ -36,7 +36,6 @@
       }
     };
   </script>
-
   <!-- Chart.js (para uso futuro; gráficos serão adicionados depois) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
@@ -72,15 +71,17 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(148, 163, 184, 0.7);
     }
+    /* ========================================= */
+    /*   ESTILOS COMPLETOS DO TEMA DARK/NEON     */
+    /* ========================================= */
 
-    /* Container geral dos cards/painéis */
     .dash-grid {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    /* Card base */
+    /* CARD BASE */
     .dash-card {
       background: radial-gradient(circle at top left, rgba(56,189,248,0.12), transparent 55%),
                   radial-gradient(circle at bottom right, rgba(248,250,252,0.02), transparent 60%),
@@ -143,7 +144,7 @@
       color: #9ca3af;
     }
 
-    /* Badges de TAG (labels) */
+    /* TAG BADGES */
     .tag-badge {
       display: inline-flex;
       align-items: center;
@@ -163,7 +164,7 @@
       opacity: 0.9;
     }
 
-    /* Tabelas básicas */
+    /* TABELA */
     .dash-table {
       width: 100%;
       border-collapse: collapse;
@@ -201,13 +202,12 @@
       padding: 0.12rem 0.5rem;
       border-radius: 999px;
       font-size: 0.7rem;
-      font-variant-numeric: tabular-nums;
       background: rgba(248,113,113,0.08);
       color: #fecaca;
       border: 1px solid rgba(248,113,113,0.6);
     }
 
-    /* Botão padrão */
+    /* BOTÃO */
     .btn-soft {
       display: inline-flex;
       align-items: center;
@@ -228,12 +228,7 @@
       box-shadow: 0 0 18px rgba(56,189,248,0.35);
     }
 
-    .btn-soft svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* Status da API */
+    /* API STATUS DOT */
     .api-status-dot {
       width: 9px;
       height: 9px;
@@ -242,13 +237,16 @@
       box-shadow: 0 0 8px rgba(56,189,248,0.9);
     }
 
-    /* Modal de mensagem (estilo WhatsApp) – estrutura base; preenchido depois */
+    /* ============================ */
+    /*   MODAL ESTILO WHATSAPP      */
+    /* ============================ */
+
     .msg-modal-backdrop {
       position: fixed;
       inset: 0;
       background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
       backdrop-filter: blur(6px);
-      display: none; /* será flex quando aberto */
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 50;
@@ -267,2111 +265,843 @@
       overflow: hidden;
     }
 
-    .msg-modal-header {
-      padding: 0.75rem 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(30,64,175,0.55);
-      background: linear-gradient(
-        to right,
-        rgba(15,23,42,1),
-        rgba(15,23,42,0.85),
-        rgba(15,23,42,1)
-      );
-    }
-
-    .msg-modal-title {
+    .msg-modal {
+      width: min(900px, 100%);
+      max-height: min(85vh, 720px);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 65%),
+                  #020617;
+      border-radius: 1.5rem;
+      border: 1px solid rgba(148,163,184,0.45);
+      box-shadow: 0 0 40px rgba(15,23,42,0.95);
       display: flex;
       flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .msg-modal-title h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .msg-modal-title span {
-      font-size: 0.75rem;
-      color: #9ca3af;
-    }
-
-    .msg-modal-body {
-      padding: 0.8rem 0.9rem 0.9rem;
-      display: flex;
-      gap: 0.75rem;
-      background:
-        radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 65%),
-        radial-gradient(circle at bottom right, rgba(37,99,235,0.10), transparent 55%),
-        linear-gradient(to bottom, #020617, #020617);
-    }
-
-    .msg-meta-panel {
-      width: 260px;
-      min-width: 220px;
-      max-width: 280px;
-      border-right: 1px solid rgba(30,64,175,0.45);
-      padding-right: 0.75rem;
-      margin-right: 0.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      font-size: 0.78rem;
-    }
-
-    .msg-meta-panel h4 {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
-    }
-
-    .msg-meta-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.08rem;
-      margin-bottom: 0.2rem;
-    }
-
-    .msg-meta-label {
-      font-size: 0.72rem;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .msg-meta-value {
-      font-size: 0.8rem;
-      color: #e5e7eb;
-    }
-
-    .msg-meta-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.25rem;
-      margin-top: 0.15rem;
-    }
-
-    .msg-meta-summary {
-      font-size: 0.78rem;
-      color: #e5e7eb;
-      line-height: 1.25;
-    }
-
-    .msg-chat-panel {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-    }
-
-    .msg-chat-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 0.25rem;
-      padding-bottom: 0.5rem;
-    }
-
-    .msg-chat-date-divider {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0.3rem auto 0.55rem;
-      padding: 0.05rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      color: #cbd5f5;
-      background: rgba(30,64,175,0.65);
-    }
-
-    .msg-bubble-row {
-      display: flex;
-      margin-bottom: 0.2rem;
-    }
-
-    .msg-bubble-row.me {
-      justify-content: flex-end;
-    }
-
-    .msg-bubble {
-      max-width: 74%;
-      padding: 0.35rem 0.55rem 0.4rem;
-      border-radius: 0.9rem;
-      position: relative;
-      background: rgba(15,23,42,0.98);
-      border: 1px solid rgba(30,64,175,0.7);
-      color: #e5e7eb;
-    }
-
-    .msg-bubble.me {
-      background: linear-gradient(135deg, rgba(56,189,248,0.22), rgba(37,99,235,0.3));
-      border-color: rgba(56,189,248,0.85);
-    }
-
-    .msg-bubble-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.1rem;
-      gap: 0.35rem;
-    }
-
-    .msg-bubble-sender {
-      font-size: 0.74rem;
-      font-weight: 500;
-      color: #e5e7eb;
-    }
-
-    .msg-bubble-time {
-      font-size: 0.7rem;
-      color: #cbd5f5;
-      opacity: 0.8;
-      white-space: nowrap;
-    }
-
-    .msg-bubble-text {
-      font-size: 0.8rem;
-      line-height: 1.25;
-      white-space: pre-wrap;
-    }
-
-    .msg-modal-footer {
-      padding: 0.6rem 0.9rem;
-      border-top: 1px solid rgba(30,64,175,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: #9ca3af;
-      background: linear-gradient(
-        to right,
-        rgba(15,23,42,0.98),
-        rgba(15,23,42,0.95),
-        rgba(15,23,42,0.98)
-      );
-    }
-
-    .msg-modal-close-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: rgba(15,23,42,0.9);
-      cursor: pointer;
-      color: #e5e7eb;
-      transition: all 0.15s ease-out;
-    }
-
-    .msg-modal-close-btn:hover {
-      border-color: rgba(56,189,248,0.9);
-      box-shadow: 0 0 14px rgba(56,189,248,0.45);
-    }
-
-    .msg-modal-close-btn svg {
-      width: 14px;
-      height: 14px;
+      overflow: hidden;
     }
   </style>
-</head>
-<body class="bg-bgDark text-textSoft min-h-screen">
-  <!-- Wrapper principal -->
-  <div class="min-h-screen flex flex-col">
-    <!-- Header virá na PARTE 2 -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4">
-<!-- ========================= -->
-<!-- HEADER DO DASHBOARD      -->
-<!-- ========================= -->
-<header class="flex items-center justify-between mb-6">
-  <div>
-    <h1 class="text-2xl font-semibold text-white tracking-tight">
-      Dashboard WhatsApp — Cecília
-    </h1>
-    <p class="text-textMuted text-sm mt-1">
-      Monitoramento inteligente com IA · Atualização contínua
-    </p>
-  </div>
 
-  <div class="flex items-center gap-3">
-    <!-- Indicador de status da API -->
-    <div id="apiStatus" class="flex items-center text-sm text-textMuted">
-      <span class="api-status-dot bg-red-500"></span>
-      API Offline
+  <!-- CryptoJS AES (Para proteção por senha) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+
+</head>
+
+<body class="bg-bgDark text-textSoft">
+
+  <!-- =============================== -->
+  <!--  🔐 TELA DE LOGIN (AES LOCK)     -->
+  <!-- =============================== -->
+  <div id="loginScreen" class="fixed inset-0 flex flex-col items-center justify-center bg-black z-50">
+    
+    <h1 class="text-xl font-bold text-purple-400 mb-6">
+      Digite a senha para acessar!
+    </h1>
+
+    <!-- Campo de senha -->
+    <div class="flex items-center mb-4">
+      <input
+        id="passwordInput"
+        type="password"
+        placeholder="Digite a senha..."
+        class="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none"
+      />
+
+      <!-- Botão "mostrar senha" -->
+      <button
+        onclick="togglePassword()"
+        class="ml-2 px-3 py-2 bg-gray-700 rounded-lg text-sm hover:bg-gray-600"
+      >
+        👁
+      </button>
     </div>
 
-    <!-- Botão Reload -->
-    <button id="reloadBtn" class="btn-soft">
-      <svg fill="none" stroke="currentColor" stroke-width="1.5"
-        viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M4.5 4.5v6h6m9 9v-6h-6M5.636 18.364A9 9 0 0 
-             0 18.364 5.636M18.364 18.364A9 9 0 0 
-             0 5.636 5.636"/>
-      </svg>
+    <!-- Botão Entrar -->
+    <button
+      onclick="attemptLogin()"
+      class="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-semibold"
+    >
+      Entrar
+    </button>
+
+    <!-- Feedback -->
+    <div id="loginError" class="text-red-500 mt-4 hidden">
+      Senha incorreta. Tente novamente.
+    </div>
+  </div>
+
+  <!-- =============================== -->
+  <!--  CONTEÚDO REAL DO DASHBOARD      -->
+  <!--  (Fica escondido até login)      -->
+  <!-- =============================== -->
+  <div id="dashboardContent" class="hidden">
+
+    <!-- TODO: As partes 2–10 vão preencher este bloco inteiro -->
+    <!-- Cards, filtros, paineis, modais, etc. -->
+  <script>
+  const DASHBOARD_PASSWORD = "efgm3936";
+
+  function togglePassword() {
+    const input = document.getElementById("passwordInput");
+    input.type = input.type === "password" ? "text" : "password";
+  }
+
+  function attemptLogin() {
+    const input = document.getElementById("passwordInput").value.trim();
+    const error = document.getElementById("loginError");
+
+    if (input === DASHBOARD_PASSWORD) {
+      // Oculta tela de login
+      document.getElementById("loginScreen").classList.add("hidden");
+
+      // Mostra dashboard
+      document.getElementById("dashboardContent").classList.remove("hidden");
+    } else {
+      error.classList.remove("hidden");
+    }
+  }
+</script>
+<!-- ============================= -->
+<!--  CABEÇALHO SUPERIOR           -->
+<!-- ============================= -->
+<header class="w-full bg-gray-900 border-b border-gray-700 mb-6 py-4 px-6 flex justify-between items-center">
+  <div>
+    <h1 class="text-2xl font-bold text-purple-400">Dashboard WhatsApp — Cecília</h1>
+    <p class="text-sm text-gray-400">Monitoramento em tempo real</p>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    
+    <!-- Estado da API -->
+    <div id="apiStatus" class="px-3 py-1 rounded-lg bg-gray-800 text-gray-300 text-sm">
+      API: <span id="apiStatusText" class="text-yellow-400">Carregando...</span>
+    </div>
+
+    <!-- Botão recarregar -->
+    <button onclick="reloadDashboard()"
+      class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm">
       Recarregar
     </button>
   </div>
 </header>
 
 
-<!-- ========================= -->
-<!--  LINHA PRINCIPAL DE CARDS -->
-<!-- ========================= -->
-<div class="dash-grid">
 
-  <!-- MENSAGENS TOTAIS -->
-  <div class="dash-card col-span-12 sm:col-span-4">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Mensagens Totais
-      </div>
-    </div>
-    <div id="cardTotalMessages" class="dash-card-main-value">—</div>
-    <div id="cardTotalMessagesSub" class="dash-card-sub mt-1">Carregando…</div>
+<!-- ================================================== -->
+<!--  GRID SUPERIOR — CARDS GRANDES                     -->
+<!-- ================================================== -->
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 px-6 mb-8">
+
+  <!-- CARD 1 — MENSAGENS TOTAIS -->
+  <div class="p-6 bg-gray-900 rounded-xl shadow-lg border border-gray-800">
+    <h2 class="text-gray-400 text-sm mb-2">Total de Mensagens</h2>
+    <div id="totalMessages" class="text-3xl font-bold text-purple-300">—</div>
+    <p class="text-sm text-gray-500 mt-2">
+      Mensagens registradas no histórico completo.
+    </p>
   </div>
 
-  <!-- MENSAGENS HOJE -->
-  <div class="dash-card col-span-12 sm:col-span-4">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Hoje
-      </div>
+
+
+  <!-- CARD 2 — HOJE -->
+  <div class="p-6 bg-gray-900 rounded-xl shadow-lg border border-gray-800">
+    <h2 class="text-gray-400 text-sm mb-2">Hoje</h2>
+
+    <div class="text-3xl font-bold text-purple-300 mb-2">
+      <span id="todaySent">—</span> enviadas<br>
+      <span id="todayReceived">—</span> recebidas
     </div>
-    <div id="cardTodayMessages" class="dash-card-main-value">—</div>
-    <div id="cardTodayMessagesSub" class="dash-card-sub mt-1">Carregando…</div>
+
+    <!-- Última mensagem registrada (migrada do card inferior) -->
+    <p class="text-sm text-gray-400 mt-4">
+      Última mensagem registrada:
+    </p>
+    <div id="lastMessage" class="text-sm text-gray-300 font-mono">—</div>
   </div>
 
-  <!-- RISCOS ALTOS -->
-  <div class="dash-card col-span-12 sm:col-span-4">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Riscos Altos (IA)
-      </div>
-    </div>
-    <div id="cardHighRiskCount" class="dash-card-main-value text-accentDanger">
+
+
+  <!-- CARD 3 — RISCOS ALTOS -->
+  <div class="p-6 bg-gray-900 rounded-xl shadow-lg border border-gray-800">
+    <h2 class="text-red-400 text-sm mb-2 font-semibold">
+      Riscos Altos (IA)
+    </h2>
+
+    <div class="text-3xl font-bold text-red-400" id="highRiskTotal">
       —
     </div>
 
-    <div class="dash-card-sub mt-1 flex flex-wrap gap-2" id="cardHighRiskTags">
-      <!-- badges aparecerão aqui -->
+    <p class="text-xs text-gray-400 mt-3 leading-snug">
+      Este número representa a soma dos scores de risco classificados pela IA
+      como <span class="text-red-300">alto impacto emocional</span>, incluindo
+      mensagens com labels como <em>depressivo</em>, <em>suicida</em> e 
+      <em>agressão</em>.  
+    </p>
+  </div>
+
+
+
+  <!-- CARD 4 — STATUS DE TAGS / LEGENDA -->
+  <div class="p-6 bg-gray-900 rounded-xl shadow-lg border border-gray-800">
+    <h2 class="text-gray-400 text-sm mb-3">Legendas de TAGs (IA)</h2>
+
+    <div class="flex flex-wrap gap-2 text-xs">
+      <span class="px-2 py-1 rounded bg-red-900 text-red-300">suicida</span>
+      <span class="px-2 py-1 rounded bg-red-800 text-red-200">depressivo</span>
+      <span class="px-2 py-1 rounded bg-yellow-900 text-yellow-300">bullying</span>
+      <span class="px-2 py-1 rounded bg-orange-900 text-orange-300">agressão</span>
+      <span class="px-2 py-1 rounded bg-blue-900 text-blue-300">apoio_positivo</span>
+      <span class="px-2 py-1 rounded bg-purple-900 text-purple-300">controle_ciumento</span>
+      <span class="px-2 py-1 rounded bg-green-900 text-green-300">conselho</span>
+      <!-- neutro e ignorado removidos -->
     </div>
   </div>
-</div> <!-- fim da primeira linha -->
-<!-- ========================= -->
-<!--  SEGUNDA LINHA DE CARDS   -->
-<!-- ========================= -->
-<div class="dash-grid mt-4">
 
-  <!-- Monitoramento – Fernando -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Monitoramento – Fernando
-      </div>
+</div> <!-- fim da grid superior -->
+
+
+<!-- ================================================ -->
+<!--  INÍCIO DO CONTAINER PRINCIPAL DE PAINEIS        -->
+<!-- ================================================ -->
+
+<div class="px-6 pb-20">
+
+<!-- PAINEIS VIRÃO AQUI NAS PARTES 3–10 -->
+<!-- ================================================ -->
+<!--   LINHA DOS CARDS DE MONITORAMENTO / IMPACTO     -->
+<!-- ================================================ -->
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+
+
+  <!-- ============================ -->
+  <!--   CARD — MONITORAMENTO FERNANDO -->
+  <!-- ============================ -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-gray-400 text-sm mb-3">
+      Monitoramento — Fernando
+    </h2>
+
+    <div class="text-3xl font-bold text-purple-300" id="fernandoTotal">
+      —
     </div>
-    <div id="fernandoTotal" class="dash-card-main-value">—</div>
-    <div class="dash-card-sub mt-1">
-      Mensagens de risco:
-      <span id="fernandoRiskCount" class="font-semibold text-red-300">—</span><br />
-      <span class="mt-1 block" id="fernandoTagsSummary">
-        TAGs principais: —
+
+    <div class="text-sm text-gray-400 mt-2 flex flex-col gap-1">
+      <span id="fernandoPct">— % do total</span>
+      <span class="text-xs text-gray-500">
+        Total de mensagens enviadas para DM/Grupos que incluem Cecília.
       </span>
     </div>
+
+    <div id="fernandoTags" class="flex flex-wrap gap-1 mt-4 text-xs"></div>
   </div>
 
-  <!-- Monitoramento – Maria Cecília -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Monitoramento – Maria Cecília
-      </div>
+
+
+  <!-- ============================ -->
+  <!--   CARD — MONITORAMENTO CECÍLIA -->
+  <!-- ============================ -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-gray-400 text-sm mb-3">
+      Monitoramento — Maria Cecília
+    </h2>
+
+    <div class="text-3xl font-bold text-purple-300" id="ceciliaTotal">
+      —
     </div>
-    <div id="mariaRiskCount" class="dash-card-main-value">—</div>
-    <div class="dash-card-sub mt-1">
-      Total de mensagens:
-      <span id="mariaTotal" class="font-semibold">—</span><br />
-      Com <span class="font-semibold">apoio_positivo</span>:
-      <span id="mariaPositiveCount" class="font-semibold text-emerald-300">—</span><br />
-      <span class="mt-1 block" id="mariaTagsSummary">
-        TAGs principais: —
+
+    <div class="text-sm text-gray-400 mt-2 flex flex-col gap-1">
+      <span id="ceciliaPct">— % do total</span>
+      <span class="text-xs text-gray-500">
+        Total de mensagens enviadas pela Cecília.
       </span>
     </div>
+
+    <div id="ceciliaTags" class="flex flex-wrap gap-1 mt-4 text-xs"></div>
   </div>
 
-  <!-- Maior ofensor individual -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Maior ofensor individual
-      </div>
-    </div>
-    <div id="topOffenderName" class="dash-card-main-value text-accentDanger">
+
+
+  <!-- =============================== -->
+  <!--   CARD — MAIOR OFENSOR INDIVIDUAL -->
+  <!-- =============================== -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-red-400 text-sm mb-3 font-semibold">
+      Maior Ofensor Individual
+    </h2>
+
+    <div id="majorOffenderName" class="text-xl font-bold text-red-300">
       —
     </div>
-    <div class="dash-card-sub mt-1">
-      Score de risco total:
-      <span id="topOffenderRiskCount" class="font-semibold text-red-300">—</span><br />
-      <span id="topOffenderTags" class="block mt-1">
-        TAGs principais: —
+
+    <div id="majorOffenderScore" class="text-3xl font-bold text-red-500 mt-2">
+      —
+    </div>
+
+    <p id="majorOffenderPct" class="text-sm text-gray-400 mt-2">— % do total</p>
+
+    <div id="majorOffenderTags" class="flex flex-wrap gap-1 mt-3 text-xs"></div>
+  </div>
+
+
+</div> <!-- fim da grid linha 1 -->
+
+
+
+<!-- ================================================ -->
+<!--  LINHA 2 — GRUPOS OFENSORES E APOIADORES         -->
+<!-- ================================================ -->
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+
+
+  <!-- ============================= -->
+  <!--   CARD — GRUPO COM MAIS OFENSAS -->
+  <!-- ============================= -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-red-400 text-sm mb-3 font-semibold">
+      Grupo com mais Ofensas
+    </h2>
+
+    <div id="worstGroupName" class="text-xl font-bold text-red-300">
+      —
+    </div>
+
+    <div id="worstGroupScore" class="text-3xl font-bold text-red-500 mt-2">
+      —
+    </div>
+
+    <p id="worstGroupPct" class="text-sm text-gray-400 mt-2">— % do total</p>
+
+    <div id="worstGroupTags" class="flex flex-wrap gap-1 mt-3 text-xs"></div>
+  </div>
+
+
+
+  <!-- ============================ -->
+  <!--   CARD — MAIOR APOIADOR        -->
+  <!-- ============================ -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-blue-400 text-sm mb-3 font-semibold">
+      Maior Apoiador
+    </h2>
+
+    <!-- 1º lugar -->
+    <div id="bestSupporter1" class="mb-6">
+      <div class="text-xl font-bold text-blue-300">—</div>
+      <div class="text-3xl font-bold text-blue-500 mt-1">—</div>
+      <p class="text-sm text-gray-400 mt-1" id="bestSupporter1Pct">— %</p>
+      <div id="bestSupporter1Tags" class="flex flex-wrap gap-1 mt-2 text-xs"></div>
+    </div>
+
+    <!-- Gabriela (fixa, aparece sempre) -->
+    <div id="bestSupporterGabriela" class="border-t border-gray-800 pt-4">
+      <div class="text-lg font-bold text-blue-300">Mamãe Gabriela</div>
+      <div id="gabrielaSupportScore" class="text-2xl font-bold text-blue-500 mt-1">—</div>
+      <p id="gabrielaSupportPct" class="text-sm text-gray-400 mt-1">— %</p>
+      <div id="gabrielaSupportTags" class="flex flex-wrap gap-1 mt-2 text-xs"></div>
+    </div>
+  </div>
+
+
+
+  <!-- =============================== -->
+  <!--   CARD — GRUPO COM MAIS APOIO     -->
+  <!-- =============================== -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <h2 class="text-green-400 text-sm mb-3 font-semibold">
+      Grupo com mais Apoio
+    </h2>
+
+    <!-- 1º lugar -->
+    <div id="bestSupportGroup1" class="mb-6">
+      <div class="text-xl font-bold text-green-300">—</div>
+      <div class="text-3xl font-bold text-green-500 mt-1">—</div>
+      <p id="bestSupportGroup1Pct" class="text-sm text-gray-400 mt-1">— %</p>
+      <div id="bestSupportGroup1Tags" class="flex flex-wrap gap-1 mt-2 text-xs"></div>
+    </div>
+
+    <!-- My Family (fixo) -->
+    <div id="bestSupportGroupFamily" class="border-t border-gray-800 pt-4">
+      <div class="text-lg font-bold text-green-300">My Family</div>
+      <div id="familySupportScore" class="text-2xl font-bold text-green-500 mt-1">—</div>
+      <p id="familySupportPct" class="text-sm text-gray-400 mt-1">— %</p>
+      <div id="familySupportTags" class="flex flex-wrap gap-1 mt-2 text-xs"></div>
+    </div>
+  </div>
+
+</div> <!-- fim da grid linha 2 -->
+<!-- ================================================ -->
+<!--  LINHA 3 — TOP GRUPOS / DMs / MENSAGEIROS        -->
+<!-- ================================================ -->
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-12">
+
+  <!-- TOP GRUPOS MAIS ATIVOS -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-gray-300 text-sm font-semibold">
+        Top grupos mais ativos
+      </h2>
+      <span class="text-[11px] text-gray-500">
+        Ordenados por volume de mensagens
       </span>
     </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left">
+        <thead class="border-b border-gray-800 text-gray-400">
+          <tr>
+            <th class="py-1 pr-2">Grupo</th>
+            <th class="py-1 pr-2 text-right">Qtd.</th>
+            <th class="py-1 text-right">% do total</th>
+          </tr>
+        </thead>
+        <tbody id="topGroupsBody" class="text-gray-200">
+          <!-- preenchido via JS -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Grupo com mais ofensas -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Grupo com mais ofensas
-      </div>
-    </div>
-    <div id="topOffenderGroupName" class="dash-card-main-value text-accentDanger">
-      —
-    </div>
-    <div class="dash-card-sub mt-1">
-      Score de risco total:
-      <span id="topOffenderGroupRiskCount" class="font-semibold text-red-300">—</span><br />
-      <span id="topOffenderGroupTags" class="block mt-1">
-        TAGs principais: —
+  <!-- TOP DMs MAIS ATIVAS -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-gray-300 text-sm font-semibold">
+        Top DMs mais ativas
+      </h2>
+      <span class="text-[11px] text-gray-500">
+        Conversas diretas (1:1)
       </span>
     </div>
-  </div>
 
-  <!-- Maior apoiador -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> Maior apoiador
-      </div>
-    </div>
-    <div id="topSupporterName" class="dash-card-main-value text-emerald-300">
-      —
-    </div>
-    <div class="dash-card-sub mt-1">
-      Mensagens de <span class="font-semibold">apoio_positivo</span>:
-      <span id="topSupporterCount" class="font-semibold text-emerald-300">—</span><br />
-      Grupo/DM principal:
-      <span id="topSupporterGroup" class="font-semibold">—</span>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left">
+        <thead class="border-b border-gray-800 text-gray-400">
+          <tr>
+            <th class="py-1 pr-2">DM</th>
+            <th class="py-1 pr-2 text-right">Qtd.</th>
+            <th class="py-1 text-right">% do total</th>
+          </tr>
+        </thead>
+        <tbody id="topDMsBody" class="text-gray-200">
+          <!-- preenchido via JS -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- 2º grupo com mais apoio positivo -->
-  <div class="dash-card col-span-12 sm:col-span-4 lg:col-span-2">
-    <div class="dash-card-header">
-      <div class="dash-card-title">
-        <span class="dot"></span> 2º grupo com mais apoio
-      </div>
+  <!-- 5+ MENSAGEIROS DE ALTO RISCO -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-red-400 text-sm font-semibold">
+        5+ mensageiros de alto risco
+      </h2>
+      <span class="text-[11px] text-gray-500">
+        Contatos com maior incidência de TAGs críticas
+      </span>
     </div>
-    <div id="secondSupportGroupName" class="dash-card-main-value text-emerald-300">
-      —
-    </div>
-    <div class="dash-card-sub mt-1">
-      Mensagens de <span class="font-semibold">apoio_positivo</span>:
-      <span id="secondSupportGroupCount" class="font-semibold text-emerald-300">—</span>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left">
+        <thead class="border-b border-gray-800 text-gray-400">
+          <tr>
+            <th class="py-1 pr-2">Contato</th>
+            <th class="py-1 pr-2 text-right">Score risco</th>
+            <th class="py-1 text-right">% do total</th>
+          </tr>
+        </thead>
+        <tbody id="highRiskSendersBody" class="text-gray-200">
+          <!-- preenchido via JS -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-</div> <!-- fim da segunda linha de cards -->
+</div> <!-- fim da grid linha 3 -->
 
 
-<!-- ========================= -->
-<!--  BLOCOS PRINCIPAIS       -->
-<!-- ========================= -->
-<div class="grid grid-cols-12 gap-4 mt-6">
+<!-- ================================================ -->
+<!--  LINHA 4 — LISTAS DE MENSAGENS (BASE / CONTEXTO) -->
+<!-- ================================================ -->
 
-  <!-- COLUNA ESQUERDA: TABELAS DE RISCO E TAGS -->
-  <section class="col-span-12 xl:col-span-7 space-y-4">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-20">
 
-    <!-- Mensagens com maior risco (IA - base) -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> Mensagens com maior risco (IA — base)
-        </div>
-      </div>
+  <!-- MENSAGENS COM MAIOR RISCO (IA — BASE) -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg flex flex-col">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-red-400 text-sm font-semibold">
+        Mensagens com maior risco (IA — base)
+      </h2>
+      <span class="text-[11px] text-gray-500">
+        Clique em uma linha para ver o contexto
+      </span>
+    </div>
 
-      <!-- Filtros -->
-      <div class="flex flex-wrap items-center gap-2 mb-2 text-xs text-textMuted">
-        <span>TAG:</span>
-        <select id="riskTagFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
+    <!-- Filtros -->
+    <div class="flex flex-wrap gap-2 mb-3 text-xs">
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">TAG</span>
+        <select id="filterBaseTag" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
           <option value="">Todas</option>
+          <!-- preenchido via JS, sem neutro/ignorado -->
         </select>
-
-        <span class="ml-2">Contato:</span>
-        <select id="riskContactFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
-          <option value="">Todos</option>
-        </select>
-
-        <span class="ml-2">Grupo/DM:</span>
-        <select id="riskGroupFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
-          <option value="">Todos</option>
-        </select>
-
-        <span class="ml-auto text-[0.7rem] text-textMuted">
-          Até <strong>200</strong> mensagens mais críticas (ordenadas por score de risco).
-        </span>
       </div>
-
-      <!-- Tabela -->
-      <div class="max-h-64 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="riskMessagesTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>Quando</th>
-              <th>Quem</th>
-              <th>Grupo / DM</th>
-              <th>Trecho / avaliação</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">Contato</span>
+        <select id="filterBaseContact" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
+          <option value="">Todos</option>
+          <!-- preenchido via JS -->
+        </select>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">Grupo/DM</span>
+        <select id="filterBaseGroup" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
+          <option value="">Todos</option>
+          <!-- preenchido via JS -->
+        </select>
       </div>
     </div>
 
-    <!-- Mensagens de risco em contexto (IA - contextual) -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> Mensagens de risco em contexto (IA — contextual)
-        </div>
-      </div>
+    <!-- Lista -->
+    <div class="max-h-80 overflow-y-auto border border-gray-800 rounded-xl">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-gray-950 sticky top-0 z-10 text-gray-400">
+          <tr>
+            <th class="py-1 px-2 w-24">Quando</th>
+            <th class="py-1 px-2 w-40">Contato</th>
+            <th class="py-1 px-2 w-40">Grupo/DM</th>
+            <th class="py-1 px-2 w-20 text-right">Score</th>
+            <th class="py-1 px-2">Trecho</th>
+          </tr>
+        </thead>
+        <tbody id="baseMessagesBody" class="text-gray-200">
+          <!-- preenchido via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-      <!-- Filtros -->
-      <div class="flex flex-wrap items-center gap-2 mb-2 text-xs text-textMuted">
-        <span>TAG contextual:</span>
-        <select id="ctxTagFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
+  <!-- MENSAGENS DE RISCO EM CONTEXTO (IA — CONTEXTUAL) -->
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl shadow-lg flex flex-col">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-purple-400 text-sm font-semibold">
+        Mensagens de risco em contexto (IA — contextual)
+      </h2>
+      <span class="text-[11px] text-gray-500">
+        Janelas de conversa ordenadas por score contextual
+      </span>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap gap-2 mb-3 text-xs">
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">TAG contextual</span>
+        <select id="filterCtxTag" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
           <option value="">Todas</option>
+          <!-- preenchido via JS, sem neutro/ignorado -->
         </select>
-
-        <span class="ml-2">Contato:</span>
-        <select id="ctxContactFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
+      </div>
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">Contato</span>
+        <select id="filterCtxContact" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
           <option value="">Todos</option>
+          <!-- preenchido via JS -->
         </select>
-
-        <span class="ml-2">Grupo/DM:</span>
-        <select id="ctxGroupFilter"
-          class="select-small bg-bgDark border border-slate-600 rounded-full px-2 py-1 text-xs">
+      </div>
+      <div class="flex flex-col">
+        <span class="text-gray-400 mb-1">Grupo/DM</span>
+        <select id="filterCtxGroup" class="bg-gray-800 border border-gray-700 rounded-md px-2 py-1 text-xs">
           <option value="">Todos</option>
+          <!-- preenchido via JS -->
         </select>
-
-        <span class="ml-auto text-[0.7rem] text-textMuted">
-          Até <strong>100</strong> contextos, ordenados pelo score contextual.
-        </span>
-      </div>
-
-      <!-- Tabela -->
-      <div class="max-h-64 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="contextMessagesTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>Quando</th>
-              <th>Quem</th>
-              <th>Grupo / DM</th>
-              <th>Contexto</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
       </div>
     </div>
 
-    <!-- Distribuição de mensagens por TAG (IA) -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> Distribuição de mensagens por TAG (IA)
-        </div>
-      </div>
-      <div class="max-h-60 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="tagDistributionTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>TAG</th>
-              <th>Qtd.</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-      <p class="text-[0.7rem] text-textMuted mt-2">
-        Cada TAG representa uma classificação feita pela IA nas mensagens analisadas
-        (depressivo, bullying, apoio_positivo, etc.).
-      </p>
+    <!-- Lista -->
+    <div class="max-h-80 overflow-y-auto border border-gray-800 rounded-xl">
+      <table class="w-full text-xs text-left">
+        <thead class="bg-gray-950 sticky top-0 z-10 text-gray-400">
+          <tr>
+            <th class="py-1 px-2 w-24">Quando</th>
+            <th class="py-1 px-2 w-32">Quem</th>
+            <th class="py-1 px-2 w-40">Grupo/DM</th>
+            <th class="py-1 px-2 w-24 text-right">Score</th>
+            <th class="py-1 px-2">Contexto</th>
+          </tr>
+        </thead>
+        <tbody id="contextMessagesBody" class="text-gray-200">
+          <!-- preenchido via JS -->
+        </tbody>
+      </table>
     </div>
+  </div>
 
-  </section>
+</div> <!-- fim da grid linha 4 -->
+
+</div> <!-- fim do container px-6 pb-20 -->
 
 
-  <!-- COLUNA DIREITA: TOP LISTAS E ÚLTIMA MENSAGEM -->
-  <section class="col-span-12 xl:col-span-5 space-y-4">
 
-    <!-- Top grupos mais ativos -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> Top grupos mais ativos
-        </div>
-        <span class="text-[0.7rem] text-textMuted">
-          Ordenados por volume de mensagens
-        </span>
-      </div>
-      <div class="max-h-52 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="topGroupsTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>Grupo</th>
-              <th>Qtd.</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
+<!-- ================================================ -->
+<!--  MODAL DE DETALHE DA MENSAGEM EM CONTEXTO        -->
+<!-- ================================================ -->
+<div
+  id="messageModal"
+  class="fixed inset-0 bg-black/70 hidden items-center justify-center z-40"
+>
+  <div
+    class="bg-gray-900 rounded-xl border border-gray-700 max-w-3xl w-full mx-4 max-h-[80vh] overflow-y-auto p-6 relative"
+  >
+    <button
+      onclick="closeMessageModal()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-gray-200 text-xl"
+      aria-label="Fechar"
+    >
+      ✕
+    </button>
 
-    <!-- Top DMs mais ativas -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> Top DMs mais ativas
-        </div>
-        <span class="text-[0.7rem] text-textMuted">
-          Conversas diretas (1:1)
-        </span>
-      </div>
-      <div class="max-h-52 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="topDMsTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>DM</th>
-              <th>Qtd.</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 5+ mensageiros de alto risco -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-2">
-        <div class="dash-card-title">
-          <span class="dot"></span> 5+ mensageiros de alto risco
-        </div>
-        <span class="text-[0.7rem] text-textMuted">
-          Contatos com mais incidência de TAGs críticas
-        </span>
-      </div>
-      <div class="max-h-52 overflow-y-auto border border-slate-800 rounded-xl">
-        <table id="highRiskSendersTable" class="dash-table">
-          <thead class="bg-slate-950/80 sticky top-0 z-10">
-            <tr>
-              <th>Contato</th>
-              <th>Score risco</th>
-              <th>% do total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Última mensagem registrada -->
-    <div class="dash-card">
-      <div class="dash-card-header mb-1">
-        <div class="dash-card-title">
-          <span class="dot"></span> Última mensagem registrada
-        </div>
-      </div>
-      <p id="lastMessageInfo" class="dash-card-sub text-sm">
-        —
-      </p>
-    </div>
-
-    <p class="text-[0.7rem] text-right text-textMuted">
-      Dados extraídos localmente via Hammerspoon · Uso exclusivo familiar
+    <p id="modalMeta" class="text-[11px] text-gray-400 mb-1">
+      <!-- horário, direção, score -->
     </p>
 
-  </section>
+    <h3 id="modalTitle" class="text-lg font-semibold text-purple-200 mb-2">
+      <!-- Nome do contato / grupo -->
+    </h3>
 
-</div> <!-- fim dos blocos principais -->
-<!-- ========================= -->
-<!--  MODAL: MENSAGEM EM CONTEXTO (ESTILO WHATSAPP) -->
-<!-- ========================= -->
-<div id="msgModalBackdrop" class="msg-modal-backdrop">
-  <div class="msg-modal">
+    <div id="modalLabels" class="flex flex-wrap gap-1 text-[11px] mb-4">
+      <!-- pills de labels -->
+    </div>
 
-    <!-- Cabeçalho do modal -->
-    <div class="msg-modal-header">
-      <div class="msg-modal-title">
-        <h3>Mensagem em contexto</h3>
-        <span id="msgModalSubtitle">—</span>
+    <div class="space-y-4 text-sm">
+      <div>
+        <p class="text-[11px] text-gray-400 mb-1">Mensagem principal</p>
+        <div
+          id="modalMainMessage"
+          class="bg-gray-800 rounded-lg px-3 py-2 text-gray-100 whitespace-pre-line"
+        ></div>
       </div>
-      <button id="msgModalCloseBtn" class="msg-modal-close-btn" aria-label="Fechar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M6 6l12 12M18 6L6 18" />
-        </svg>
-      </button>
+
+      <div>
+        <p class="text-[11px] text-gray-400 mb-1">Contexto anterior</p>
+        <div
+          id="modalContextBefore"
+          class="bg-gray-800 rounded-lg px-3 py-2 text-gray-200 text-xs whitespace-pre-line"
+        ></div>
+      </div>
+
+      <div>
+        <p class="text-[11px] text-gray-400 mb-1">
+          Respostas / continuação
+        </p>
+        <div
+          id="modalContextAfter"
+          class="bg-gray-800 rounded-lg px-3 py-2 text-gray-200 text-xs whitespace-pre-line"
+        ></div>
+      </div>
     </div>
-
-    <!-- Corpo do modal: meta + chat -->
-    <div class="msg-modal-body">
-      <!-- Painel lateral com metadados da mensagem -->
-      <aside class="msg-meta-panel">
-        <h4>Detalhes da mensagem analisada</h4>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Remetente</span>
-          <span id="msgMetaSender" class="msg-meta-value">—</span>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Grupo / DM</span>
-          <span id="msgMetaGroup" class="msg-meta-value">—</span>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Data e hora</span>
-          <span id="msgMetaTimestamp" class="msg-meta-value">—</span>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Risco (base)</span>
-          <span id="msgMetaRiskBase" class="msg-meta-value">—</span>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Risco (contexto)</span>
-          <span id="msgMetaRiskCtx" class="msg-meta-value">—</span>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">TAGs (base)</span>
-          <div id="msgMetaTagsBase" class="msg-meta-tags">
-            <!-- badges de TAGs base -->
-          </div>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">TAGs (contexto)</span>
-          <div id="msgMetaTagsCtx" class="msg-meta-tags">
-            <!-- badges de TAGs contextuais -->
-          </div>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Resumo IA (base)</span>
-          <p id="msgMetaSummaryBase" class="msg-meta-summary">—</p>
-        </div>
-
-        <div class="msg-meta-item">
-          <span class="msg-meta-label">Resumo IA (contexto)</span>
-          <p id="msgMetaSummaryCtx" class="msg-meta-summary">—</p>
-        </div>
-      </aside>
-
-      <!-- Painel principal de chat (bolhas estilo WhatsApp) -->
-      <section class="msg-chat-panel">
-        <div id="msgChatScroll" class="msg-chat-scroll">
-          <!-- bolhas de conversa serão inseridas aqui via JS -->
-        </div>
-      </section>
-    </div>
-
-    <!-- Rodapé do modal -->
-    <div class="msg-modal-footer">
-      <span id="msgModalFooterInfo">
-        Contexto reconstruído a partir das mensagens próximas no log.
-      </span>
-      <span class="text-[0.7rem] text-textMuted">
-        Clique fora da janela ou no “X” para fechar.
-      </span>
-    </div>
-
   </div>
 </div>
-</main> <!-- fim do main principal -->
-    <!-- ========================= -->
-    <!--  SCRIPTS DO DASHBOARD     -->
-    <!-- ========================= -->
-    <script>
-      // ============================
-      // CONFIGURAÇÕES BÁSICAS
-      // ============================
-      const API_URL = "https://script.google.com/macros/s/AKfycbylJFpFSLxAaEC_sCx9d4jpGtLBW_4d62kUlZ7EehgFWtlr0Wvc5Jv-ue2e87QEWXtX/exec";
 
-      // Nomes importantes para monitoramento
-      const SELF_NAME = "Maria Cecília";
-      const MONITORED_FERNANDO = "Fernando";
-      const MONITORED_MARIA = "Maria Cecília";
 
-      // Estado global
-      let DASH_ROWS = [];
-      let ROWS_BY_ID = new Map();
 
-      // ============================
-      // HELPERS GERAIS
-      // ============================
+</div> <!-- fim de #dashboardContent -->
 
-      function parseDate(ts) {
-        // "2025-03-13 19:35:34" -> Date local
-        if (!ts) return null;
-        try {
-          const iso = ts.replace(" ", "T");
-          return new Date(iso);
-        } catch (e) {
-          return null;
-        }
-      }
 
-      function formatDate(d) {
-        if (!(d instanceof Date) || isNaN(d.getTime())) return "—";
-        const dd = String(d.getDate()).padStart(2, "0");
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const yyyy = d.getFullYear();
-        return `${dd}/${mm}/${yyyy}`;
-      }
+<!-- ================================================== -->
+<!--  SCRIPT BASE DO DASHBOARD (INTEGRAÇÃO PENDENTE)    -->
+<!-- ================================================== -->
 
-      function formatTime(d) {
-        if (!(d instanceof Date) || isNaN(d.getTime())) return "—";
-        const hh = String(d.getHours()).padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        return `${hh}:${mi}`;
-      }
+	<script>
+  // Caches de mensagens para o modal
+  let highRiskMessagesCache = [];
+  let contextMessagesCache = [];
 
-      function formatDateTime(d) {
-        if (!(d instanceof Date) || isNaN(d.getTime())) return "—";
-        return `${formatDate(d)} ${formatTime(d)}`;
-      }
+  // Helpers de UI simples
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
 
-      function sameDay(d1, d2) {
-        return (
-          d1 &&
-          d2 &&
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        );
-      }
+  function createTagPill(label) {
+    const span = document.createElement("span");
+    span.className =
+      "px-2 py-0.5 rounded-full border border-gray-700 bg-gray-800 text-[10px] text-gray-200";
+    span.textContent = label;
+    return span;
+  }
 
-      function toNumber(v, fallback = 0) {
-        const n = Number(v);
-        return isNaN(n) ? fallback : n;
-      }
+  function renderTagsInto(container, tags) {
+    if (!container) return;
+    container.innerHTML = "";
+    if (!tags) return;
 
-      function normalizeStr(s) {
-        return (s || "").toString().trim();
-      }
-
-      function parseTags(str) {
-        if (!str) return [];
-        return str
-          .split(/[;,\|]/)
-          .map((t) => t.trim())
-          .filter(Boolean);
-      }
-
-      function createTagBadge(label, count) {
-        const span = document.createElement("span");
-        span.className = "tag-badge";
-        const labelText = document.createElement("span");
-        labelText.textContent = label;
-        span.appendChild(labelText);
-
-        if (typeof count === "number") {
-          const countSpan = document.createElement("span");
-          countSpan.className = "count";
-          countSpan.textContent = count;
-          span.appendChild(countSpan);
-        }
-
-        applyTagStyle(span, label);
-        return span;
-      }
-
-      function applyTagStyle(el, label) {
-        const l = (label || "").toLowerCase();
-        let border = "rgba(56,189,248,0.7)";
-        let bg = "rgba(8,47,73,0.7)";
-        let color = "#e0f2fe";
-
-        if (l.includes("suicida")) {
-          border = "rgba(248,113,113,0.9)";
-          bg = "rgba(127,29,29,0.65)";
-          color = "#fee2e2";
-        } else if (l.includes("depress")) {
-          border = "rgba(168,85,247,0.9)";
-          bg = "rgba(76,29,149,0.7)";
-          color = "#ede9fe";
-        } else if (l.includes("bullying") || l.includes("violencia")) {
-          border = "rgba(251,191,36,0.95)";
-          bg = "rgba(120,53,15,0.75)";
-          color = "#fef3c7";
-        } else if (l.includes("autoagress")) {
-          border = "rgba(244,114,182,0.9)";
-          bg = "rgba(131,24,67,0.7)";
-          color = "#fce7f3";
-        } else if (l.includes("apoio")) {
-          border = "rgba(52,211,153,0.95)";
-          bg = "rgba(6,78,59,0.8)";
-          color = "#d1fae5";
-        } else if (l.includes("neutro")) {
-          border = "rgba(148,163,184,0.8)";
-          bg = "rgba(15,23,42,0.9)";
-          color = "#e5e7eb";
-        }
-
-        el.style.borderColor = border;
-        el.style.color = color;
-        el.style.backgroundColor = bg;
-      }
-
-      function clearElement(el) {
-        if (!el) return;
-        while (el.firstChild) el.removeChild(el.firstChild);
-      }
-
-      function updateApiStatus(ok, message) {
-        const el = document.getElementById("apiStatus");
-        if (!el) return;
-
-        const dot = el.querySelector(".api-status-dot");
-        if (dot) {
-          dot.classList.remove("bg-red-500", "bg-amber-400", "bg-emerald-400");
-          dot.classList.add(ok ? "bg-emerald-400" : "bg-red-500");
-        }
-
-        el.textContent = "";
-        const dotSpan = document.createElement("span");
-        dotSpan.className =
-          "api-status-dot " + (ok ? "bg-emerald-400" : "bg-red-500");
-        el.appendChild(dotSpan);
-
-        const textNode = document.createTextNode(
-          message || (ok ? "API Online" : "API Offline")
-        );
-        el.appendChild(textNode);
-      }
-
-      // ============================
-      // CÁLCULOS E CARDS
-      // ============================
-
-      function computeAndRenderCards(rows) {
-        const total = rows.length;
-        if (total === 0) {
-          document.getElementById("cardTotalMessages").textContent = "0";
-          document.getElementById("cardTotalMessagesSub").textContent =
-            "Nenhuma mensagem encontrada.";
-          document.getElementById("cardTodayMessages").textContent = "0";
-          document.getElementById("cardTodayMessagesSub").textContent =
-            "Sem mensagens hoje.";
-          return;
-        }
-
-        let minDate = null;
-        let maxDate = null;
-        let enviados = 0;
-        let recebidos = 0;
-
-        const now = new Date();
-        let hojeTotal = 0;
-        let hojeEnviadas = 0;
-        let hojeRecebidas = 0;
-
-        rows.forEach((r) => {
-          const d = parseDate(r.timestamp);
-          if (d && !isNaN(d.getTime())) {
-            if (!minDate || d < minDate) minDate = d;
-            if (!maxDate || d > maxDate) maxDate = d;
-
-            if (sameDay(d, now)) {
-              hojeTotal++;
-              if ((r.status || "").toLowerCase() === "enviado") hojeEnviadas++;
-              if ((r.status || "").toLowerCase() === "recebido") hojeRecebidas++;
-            }
-          }
-
-          const st = (r.status || "").toLowerCase();
-          if (st === "enviado") enviados++;
-          if (st === "recebido") recebidos++;
-        });
-
-        // Card: Mensagens Totais
-        const cardTotalEl = document.getElementById("cardTotalMessages");
-        const cardTotalSubEl = document.getElementById("cardTotalMessagesSub");
-
-        if (cardTotalEl) cardTotalEl.textContent = total.toLocaleString("pt-BR");
-
-        if (cardTotalSubEl) {
-          const periodo =
-            minDate && maxDate
-              ? `Período: ${formatDate(minDate)} – ${formatDate(maxDate)}`
-              : "Período não identificado";
-
-          cardTotalSubEl.textContent = `${periodo} • Enviadas: ${enviados.toLocaleString(
-            "pt-BR"
-          )} · Recebidas: ${recebidos.toLocaleString("pt-BR")}`;
-        }
-
-        // Card: Hoje
-        const cardTodayEl = document.getElementById("cardTodayMessages");
-        const cardTodaySubEl = document.getElementById("cardTodayMessagesSub");
-        if (cardTodayEl)
-          cardTodayEl.textContent = hojeTotal.toLocaleString("pt-BR");
-        if (cardTodaySubEl) {
-          cardTodaySubEl.textContent = `Enviadas: ${hojeEnviadas.toLocaleString(
-            "pt-BR"
-          )} · Recebidas: ${hojeRecebidas.toLocaleString("pt-BR")}`;
-        }
-
-        // Card: Riscos Altos
-        const highRiskThreshold = 70;
-        let highRiskCount = 0;
-        const tagCountsHighRisk = {};
-
-        rows.forEach((r) => {
-          const base = toNumber(r.ia_risk_score, 0);
-          const ctx = toNumber(r.ia_risk_score_ctx, 0);
-          const eff = Math.max(base, ctx);
-          if (eff >= highRiskThreshold) {
-            highRiskCount++;
-            const tags = [
-              ...parseTags(r.ia_labels),
-              ...parseTags(r.ia_labels_ctx),
-            ];
-            tags.forEach((t) => {
-              if (!t) return;
-              tagCountsHighRisk[t] = (tagCountsHighRisk[t] || 0) + 1;
-            });
-          }
-        });
-
-        const highRiskEl = document.getElementById("cardHighRiskCount");
-        if (highRiskEl)
-          highRiskEl.textContent = highRiskCount.toLocaleString("pt-BR");
-
-        const highRiskTagsEl = document.getElementById("cardHighRiskTags");
-        clearElement(highRiskTagsEl);
-        const entries = Object.entries(tagCountsHighRisk).sort(
-          (a, b) => b[1] - a[1]
-        );
-        entries.slice(0, 6).forEach(([tag, count]) => {
-          const badge = createTagBadge(tag, count);
-          highRiskTagsEl.appendChild(badge);
-        });
-
-        // Monitoramento – Fernando e Maria Cecília
-        computeAndRenderMonitored(rows);
-        // Offensores / apoios
-        computeAndRenderOffendersAndSupport(rows);
-      }
-
-      function computeAndRenderMonitored(rows) {
-        let fernandoTotal = 0;
-        let fernandoHighRisk = 0;
-        const fernandoTagCounts = {};
-
-        let mariaTotal = 0;
-        let mariaPositive = 0;
-        const mariaTagCounts = {};
-
-        rows.forEach((r) => {
-          const sender = normalizeStr(r.sender);
-          const group = normalizeStr(r["group/receiver"]);
-          const allTags = [
-            ...parseTags(r.ia_labels),
-            ...parseTags(r.ia_labels_ctx),
-          ];
-          const base = toNumber(r.ia_risk_score, 0);
-          const ctx = toNumber(r.ia_risk_score_ctx, 0);
-          const eff = Math.max(base, ctx);
-
-          // Fernando
-          if (
-            sender === MONITORED_FERNANDO ||
-            group.includes(MONITORED_FERNANDO)
-          ) {
-            fernandoTotal++;
-            if (eff >= 50) {
-              fernandoHighRisk++;
-              allTags.forEach((t) => {
-                if (!t) return;
-                fernandoTagCounts[t] = (fernandoTagCounts[t] || 0) + 1;
-              });
-            }
-          }
-
-          // Maria Cecília
-          if (
-            sender === MONITORED_MARIA ||
-            group.includes(MONITORED_MARIA)
-          ) {
-            mariaTotal++;
-            const hasPositive = allTags.some((t) =>
-              t.toLowerCase().includes("apoio_positivo")
-            );
-            if (hasPositive) {
-              mariaPositive++;
-            }
-            allTags.forEach((t) => {
-              if (!t) return;
-              mariaTagCounts[t] = (mariaTagCounts[t] || 0) + 1;
-            });
-          }
-        });
-
-        // Atualiza cards (Fernando)
-        const fernandoTotalEl = document.getElementById("fernandoTotal");
-        const fernandoRiskEl = document.getElementById("fernandoRiskCount");
-        const fernandoTagsEl = document.getElementById("fernandoTagsSummary");
-        if (fernandoTotalEl)
-          fernandoTotalEl.textContent = fernandoTotal.toLocaleString("pt-BR");
-        if (fernandoRiskEl)
-          fernandoRiskEl.textContent = fernandoHighRisk.toLocaleString("pt-BR");
-        if (fernandoTagsEl) {
-          const entries = Object.entries(fernandoTagCounts).sort(
-            (a, b) => b[1] - a[1]
-          );
-          if (entries.length === 0) {
-            fernandoTagsEl.textContent = "TAGs principais: —";
-          } else {
-            const top = entries
-              .slice(0, 4)
-              .map(([tag, count]) => `${tag} (${count})`)
-              .join(" · ");
-            fernandoTagsEl.textContent = `TAGs principais: ${top}`;
-          }
-        }
-
-        // Atualiza cards (Maria)
-        const mariaTotalEl = document.getElementById("mariaTotal");
-        const mariaPositiveEl = document.getElementById("mariaPositiveCount");
-        const mariaRiskCountEl = document.getElementById("mariaRiskCount");
-        const mariaTagsEl = document.getElementById("mariaTagsSummary");
-
-        if (mariaTotalEl)
-          mariaTotalEl.textContent = mariaTotal.toLocaleString("pt-BR");
-        if (mariaPositiveEl)
-          mariaPositiveEl.textContent = mariaPositive.toLocaleString("pt-BR");
-
-        // risco alto para Maria = mensagens dela com eff >= 70
-        let mariaHighRisk = 0;
-        rows.forEach((r) => {
-          const sender = normalizeStr(r.sender);
-          const group = normalizeStr(r["group/receiver"]);
-          if (
-            sender === MONITORED_MARIA ||
-            group.includes(MONITORED_MARIA)
-          ) {
-            const base = toNumber(r.ia_risk_score, 0);
-            const ctx = toNumber(r.ia_risk_score_ctx, 0);
-            const eff = Math.max(base, ctx);
-            if (eff >= 70) mariaHighRisk++;
-          }
-        });
-        if (mariaRiskCountEl)
-          mariaRiskCountEl.textContent =
-            mariaHighRisk.toLocaleString("pt-BR");
-
-        if (mariaTagsEl) {
-          const entries = Object.entries(mariaTagCounts).sort(
-            (a, b) => b[1] - a[1]
-          );
-          if (entries.length === 0) {
-            mariaTagsEl.textContent = "TAGs principais: —";
-          } else {
-            const top = entries
-              .slice(0, 4)
-              .map(([tag, count]) => `${tag} (${count})`)
-              .join(" · ");
-            mariaTagsEl.textContent = `TAGs principais: ${top}`;
-          }
-        }
-      }
-
-      function computeAndRenderOffendersAndSupport(rows) {
-        const senderRiskSum = {};
-        const groupRiskSum = {};
-        let totalRiskSum = 0;
-
-        const posBySender = {};
-        const posByGroup = {};
-
-        rows.forEach((r) => {
-          const sender = normalizeStr(r.sender);
-          const group = normalizeStr(r["group/receiver"]);
-          const base = toNumber(r.ia_risk_score, 0);
-          const ctx = toNumber(r.ia_risk_score_ctx, 0);
-          const eff = Math.max(base, ctx);
-
-          if (eff > 0) {
-            senderRiskSum[sender] = (senderRiskSum[sender] || 0) + eff;
-            groupRiskSum[group] = (groupRiskSum[group] || 0) + eff;
-            totalRiskSum += eff;
-          }
-
-          const allTags = [
-            ...parseTags(r.ia_labels),
-            ...parseTags(r.ia_labels_ctx),
-          ];
-          const hasPos = allTags.some((t) =>
-            t.toLowerCase().includes("apoio_positivo")
-          );
-          if (hasPos) {
-            posBySender[sender] = (posBySender[sender] || 0) + 1;
-            posByGroup[group] = (posByGroup[group] || 0) + 1;
-          }
-        });
-
-        // Maior ofensor individual
-        const offenders = Object.entries(senderRiskSum).sort(
-          (a, b) => b[1] - a[1]
-        );
-        if (offenders.length > 0) {
-          const [name, risk] = offenders[0];
-          const nameEl = document.getElementById("topOffenderName");
-          const riskEl = document.getElementById("topOffenderRiskCount");
-          const tagsEl = document.getElementById("topOffenderTags");
-          if (nameEl) nameEl.textContent = name || "—";
-          if (riskEl)
-            riskEl.textContent = Math.round(risk).toLocaleString("pt-BR");
-
-          if (tagsEl) {
-            // tags mais frequentes desse remetente
-            const tagCounts = {};
-            rows.forEach((r) => {
-              if (normalizeStr(r.sender) !== name) return;
-              const allTags = [
-                ...parseTags(r.ia_labels),
-                ...parseTags(r.ia_labels_ctx),
-              ];
-              allTags.forEach((t) => {
-                if (!t) return;
-                tagCounts[t] = (tagCounts[t] || 0) + 1;
-              });
-            });
-            const entries = Object.entries(tagCounts).sort(
-              (a, b) => b[1] - a[1]
-            );
-            if (entries.length === 0) {
-              tagsEl.textContent = "TAGs principais: —";
-            } else {
-              const top = entries
-                .slice(0, 4)
-                .map(([tag, count]) => `${tag} (${count})`)
-                .join(" · ");
-              tagsEl.textContent = `TAGs principais: ${top}`;
-            }
-          }
-        }
-
-        // Grupo com mais ofensas
-        const offendGroups = Object.entries(groupRiskSum).sort(
-          (a, b) => b[1] - a[1]
-        );
-        if (offendGroups.length > 0) {
-          const [gName, gRisk] = offendGroups[0];
-          const gNameEl = document.getElementById("topOffenderGroupName");
-          const gRiskEl = document.getElementById("topOffenderGroupRiskCount");
-          const gTagsEl = document.getElementById("topOffenderGroupTags");
-          if (gNameEl) gNameEl.textContent = gName || "—";
-          if (gRiskEl)
-            gRiskEl.textContent = Math.round(gRisk).toLocaleString("pt-BR");
-
-          if (gTagsEl) {
-            const tagCounts = {};
-            rows.forEach((r) => {
-              if (normalizeStr(r["group/receiver"]) !== gName) return;
-              const allTags = [
-                ...parseTags(r.ia_labels),
-                ...parseTags(r.ia_labels_ctx),
-              ];
-              allTags.forEach((t) => {
-                if (!t) return;
-                tagCounts[t] = (tagCounts[t] || 0) + 1;
-              });
-            });
-            const entries = Object.entries(tagCounts).sort(
-              (a, b) => b[1] - a[1]
-            );
-            if (entries.length === 0) {
-              gTagsEl.textContent = "TAGs principais: —";
-            } else {
-              const top = entries
-                .slice(0, 4)
-                .map(([tag, count]) => `${tag} (${count})`)
-                .join(" · ");
-              gTagsEl.textContent = `TAGs principais: ${top}`;
-            }
-          }
-        }
-
-        // Maior apoiador (por sender)
-        const supporters = Object.entries(posBySender).sort(
-          (a, b) => b[1] - a[1]
-        );
-        if (supporters.length > 0) {
-          const [name, count] = supporters[0];
-          const nameEl = document.getElementById("topSupporterName");
-          const countEl = document.getElementById("topSupporterCount");
-          const groupEl = document.getElementById("topSupporterGroup");
-          if (nameEl) nameEl.textContent = name || "—";
-          if (countEl) countEl.textContent = count.toLocaleString("pt-BR");
-
-          if (groupEl) {
-            // grupo/DM onde essa pessoa mais aparece com apoio_positivo
-            const groupCounts = {};
-            rows.forEach((r) => {
-              if (normalizeStr(r.sender) !== name) return;
-              const allTags = [
-                ...parseTags(r.ia_labels),
-                ...parseTags(r.ia_labels_ctx),
-              ];
-              const hasPos = allTags.some((t) =>
-                t.toLowerCase().includes("apoio_positivo")
-              );
-              if (!hasPos) return;
-              const g = normalizeStr(r["group/receiver"]);
-              groupCounts[g] = (groupCounts[g] || 0) + 1;
-            });
-            const gEntries = Object.entries(groupCounts).sort(
-              (a, b) => b[1] - a[1]
-            );
-            groupEl.textContent =
-              gEntries.length > 0 ? gEntries[0][0] || "—" : "—";
-          }
-        }
-
-        // 2º grupo com mais apoio_positivo
-        const supportGroups = Object.entries(posByGroup).sort(
-          (a, b) => b[1] - a[1]
-        );
-        if (supportGroups.length > 1) {
-          const [gName, gCount] = supportGroups[1];
-          const gNameEl = document.getElementById("secondSupportGroupName");
-          const gCountEl = document.getElementById("secondSupportGroupCount");
-          if (gNameEl) gNameEl.textContent = gName || "—";
-          if (gCountEl) gCountEl.textContent = gCount.toLocaleString("pt-BR");
-        } else if (supportGroups.length === 1) {
-          // se só existe 1, mostra mesmo assim
-          const [gName, gCount] = supportGroups[0];
-          const gNameEl = document.getElementById("secondSupportGroupName");
-          const gCountEl = document.getElementById("secondSupportGroupCount");
-          if (gNameEl) gNameEl.textContent = gName || "—";
-          if (gCountEl) gCountEl.textContent = gCount.toLocaleString("pt-BR");
-        }
-      }
-
-      // ============================
-      // TABELAS: TAGS, GRUPOS, DMs, HIGH RISK SENDERS
-      // ============================
-
-      function renderTagDistribution(rows) {
-        const tableBody = document.querySelector(
-          "#tagDistributionTable tbody"
-        );
-        if (!tableBody) return;
-        clearElement(tableBody);
-
-        const tagCounts = {};
-        rows.forEach((r) => {
-          const tags = parseTags(r.ia_labels);
-          tags.forEach((t) => {
-            if (!t) return;
-            tagCounts[t] = (tagCounts[t] || 0) + 1;
-          });
-        });
-
-        const entries = Object.entries(tagCounts).sort(
-          (a, b) => b[1] - a[1]
-        );
-        const totalCount = entries.reduce((acc, [, c]) => acc + c, 0);
-
-        entries.forEach(([tag, count]) => {
-          const tr = document.createElement("tr");
-
-          const tdTag = document.createElement("td");
-          const badge = createTagBadge(tag);
-          tdTag.appendChild(badge);
-
-          const tdCount = document.createElement("td");
-          tdCount.textContent = count.toLocaleString("pt-BR");
-
-          const tdPercent = document.createElement("td");
-          const pct =
-            totalCount > 0 ? (count / totalCount) * 100 : 0;
-          tdPercent.textContent = `${pct.toFixed(1)}%`;
-
-          tr.appendChild(tdTag);
-          tr.appendChild(tdCount);
-          tr.appendChild(tdPercent);
-
-          tableBody.appendChild(tr);
-        });
-      }
-
-      function renderTopGroupsAndDMs(rows) {
-        const groupsBody = document.querySelector("#topGroupsTable tbody");
-        const dmsBody = document.querySelector("#topDMsTable tbody");
-        if (groupsBody) clearElement(groupsBody);
-        if (dmsBody) clearElement(dmsBody);
-
-        const groupCounts = {};
-        const dmCounts = {};
-        let totalGroup = 0;
-        let totalDM = 0;
-
-        rows.forEach((r) => {
-          const origem = (r.origem || "").toUpperCase();
-          const grp = normalizeStr(r["group/receiver"]);
-          if (!grp) return;
-
-          if (origem === "GRUPO") {
-            groupCounts[grp] = (groupCounts[grp] || 0) + 1;
-            totalGroup++;
-          } else if (origem === "DM") {
-            dmCounts[grp] = (dmCounts[grp] || 0) + 1;
-            totalDM++;
-          }
-        });
-
-        // grupos
-        if (groupsBody) {
-          const entries = Object.entries(groupCounts).sort(
-            (a, b) => b[1] - a[1]
-          );
-          entries.forEach(([name, count]) => {
-            const tr = document.createElement("tr");
-            const tdName = document.createElement("td");
-            tdName.textContent = name || "—";
-
-            const tdCount = document.createElement("td");
-            tdCount.textContent = count.toLocaleString("pt-BR");
-
-            const tdPercent = document.createElement("td");
-            const pct =
-              totalGroup > 0 ? (count / totalGroup) * 100 : 0;
-            tdPercent.textContent = `${pct.toFixed(1)}%`;
-
-            tr.appendChild(tdName);
-            tr.appendChild(tdCount);
-            tr.appendChild(tdPercent);
-            groupsBody.appendChild(tr);
-          });
-        }
-
-        // DMs
-        if (dmsBody) {
-          const entries = Object.entries(dmCounts).sort(
-            (a, b) => b[1] - a[1]
-          );
-          entries.forEach(([name, count]) => {
-            const tr = document.createElement("tr");
-            const tdName = document.createElement("td");
-            tdName.textContent = name || "—";
-
-            const tdCount = document.createElement("td");
-            tdCount.textContent = count.toLocaleString("pt-BR");
-
-            const tdPercent = document.createElement("td");
-            const pct = totalDM > 0 ? (count / totalDM) * 100 : 0;
-            tdPercent.textContent = `${pct.toFixed(1)}%`;
-
-            tr.appendChild(tdName);
-            tr.appendChild(tdCount);
-            tr.appendChild(tdPercent);
-            dmsBody.appendChild(tr);
-          });
-        }
-      }
-
-      function renderHighRiskSendersTable(rows) {
-        const tbody = document.querySelector(
-          "#highRiskSendersTable tbody"
-        );
-        if (!tbody) return;
-        clearElement(tbody);
-
-        const senderRisk = {};
-        let totalRisk = 0;
-
-        rows.forEach((r) => {
-          const sender = normalizeStr(r.sender);
-          const base = toNumber(r.ia_risk_score, 0);
-          const ctx = toNumber(r.ia_risk_score_ctx, 0);
-          const eff = Math.max(base, ctx);
-          if (eff > 0) {
-            senderRisk[sender] = (senderRisk[sender] || 0) + eff;
-            totalRisk += eff;
-          }
-        });
-
-        const entries = Object.entries(senderRisk).sort(
-          (a, b) => b[1] - a[1]
-        );
-
-        entries.forEach(([sender, sum]) => {
-          const tr = document.createElement("tr");
-          const tdName = document.createElement("td");
-          const tdRisk = document.createElement("td");
-          const tdPercent = document.createElement("td");
-
-          tdName.textContent = sender || "—";
-          tdRisk.textContent = Math.round(sum).toLocaleString("pt-BR");
-          const pct = totalRisk > 0 ? (sum / totalRisk) * 100 : 0;
-          tdPercent.textContent = `${pct.toFixed(1)}%`;
-
-          tr.appendChild(tdName);
-          tr.appendChild(tdRisk);
-          tr.appendChild(tdPercent);
-          tbody.appendChild(tr);
-        });
-      }
-
-      function renderLastMessage(rows) {
-        const el = document.getElementById("lastMessageInfo");
-        if (!el) return;
-
-        if (rows.length === 0) {
-          el.textContent = "Nenhuma mensagem registrada.";
-          return;
-        }
-
-        let lastRow = null;
-        let lastDate = null;
-
-        rows.forEach((r) => {
-          const d = parseDate(r.timestamp);
-          if (!d || isNaN(d.getTime())) return;
-          if (!lastDate || d > lastDate) {
-            lastDate = d;
-            lastRow = r;
-          }
-        });
-
-        if (!lastRow) {
-          el.textContent = "Nenhuma mensagem registrada.";
-          return;
-        }
-
-        const d = lastDate;
-        const sender = normalizeStr(lastRow.sender);
-        const group = normalizeStr(lastRow["group/receiver"]);
-        const status = (lastRow.status || "").toLowerCase();
-        const base = toNumber(lastRow.ia_risk_score, 0);
-        const ctx = toNumber(lastRow.ia_risk_score_ctx, 0);
-        const tags = [
-          ...parseTags(lastRow.ia_labels),
-          ...parseTags(lastRow.ia_labels_ctx),
-        ];
-        const tagsText =
-          tags.length > 0 ? tags.join(", ") : "sem TAGs de risco";
-
-        el.textContent = `${formatDateTime(d)} — ${sender} em ${
-          group || "DM/Grupo não identificado"
-        } (${status || "status indefinido"}) • Risco base: ${base} / contexto: ${
-          ctx || 0
-        } • TAGs: ${tagsText}`;
-      }
-
-      // ============================
-      // TABELAS DE RISCO (BASE / CONTEXTO) + MODAL
-      // ============================
-
-      function buildGlobalRowMap(rows) {
-        ROWS_BY_ID.clear();
-        rows.forEach((r) => {
-          const id = String(r["#"] || "").trim();
-          if (id) ROWS_BY_ID.set(id, r);
-        });
-      }
-
-      function populateRiskFilters(rows) {
-        const riskTagSelect = document.getElementById("riskTagFilter");
-        const riskContactSelect = document.getElementById(
-          "riskContactFilter"
-        );
-        const riskGroupSelect = document.getElementById("riskGroupFilter");
-
-        const ctxTagSelect = document.getElementById("ctxTagFilter");
-        const ctxContactSelect = document.getElementById(
-          "ctxContactFilter"
-        );
-        const ctxGroupSelect = document.getElementById("ctxGroupFilter");
-
-        const allTagsBase = new Set();
-        const allTagsCtx = new Set();
-        const allContacts = new Set();
-        const allGroups = new Set();
-
-        rows.forEach((r) => {
-          parseTags(r.ia_labels).forEach((t) => {
-            if (!t) return;
-            allTagsBase.add(t);
-          });
-          parseTags(r.ia_labels_ctx).forEach((t) => {
-            if (!t) return;
-            allTagsCtx.add(t);
-          });
-          allContacts.add(normalizeStr(r.sender));
-          allGroups.add(normalizeStr(r["group/receiver"]));
-        });
-
-        function fillSelect(select, values, placeholder) {
-          if (!select) return;
-          const current = select.value;
-          clearElement(select);
-          const optAny = document.createElement("option");
-          optAny.value = "";
-          optAny.textContent = placeholder;
-          select.appendChild(optAny);
-
-          Array.from(values)
-            .filter((v) => v)
-            .sort((a, b) => a.localeCompare(b, "pt-BR"))
-            .forEach((v) => {
-              const opt = document.createElement("option");
-              opt.value = v;
-              opt.textContent = v;
-              select.appendChild(opt);
-            });
-
-          // tenta manter seleção anterior
-          if (current) {
-            const found = Array.from(select.options).some(
-              (o) => o.value === current
-            );
-            if (found) select.value = current;
-          }
-        }
-
-        fillSelect(riskTagSelect, allTagsBase, "Todas");
-        fillSelect(riskContactSelect, allContacts, "Todos");
-        fillSelect(riskGroupSelect, allGroups, "Todos");
-
-        fillSelect(ctxTagSelect, allTagsCtx, "Todas");
-        fillSelect(ctxContactSelect, allContacts, "Todos");
-        fillSelect(ctxGroupSelect, allGroups, "Todos");
-      }
-
-      function getEffectiveRisk(row) {
-        const base = toNumber(row.ia_risk_score, 0);
-        const ctx = toNumber(row.ia_risk_score_ctx, 0);
-        return Math.max(base, ctx);
-      }
-
-      function renderRiskBaseTable(rows) {
-        const tbody = document.querySelector(
-          "#riskMessagesTable tbody"
-        );
-        if (!tbody) return;
-        clearElement(tbody);
-
-        const tagFilter = normalizeStr(
-          document.getElementById("riskTagFilter")?.value
-        );
-        const contactFilter = normalizeStr(
-          document.getElementById("riskContactFilter")?.value
-        );
-        const groupFilter = normalizeStr(
-          document.getElementById("riskGroupFilter")?.value
-        );
-
-        const filtered = rows
-          .filter((r) => toNumber(r.ia_risk_score, 0) > 0)
-          .filter((r) => {
-            if (tagFilter) {
-              const tags = parseTags(r.ia_labels);
-              if (!tags.some((t) => t === tagFilter)) return false;
-            }
-            if (contactFilter) {
-              if (normalizeStr(r.sender) !== contactFilter) return false;
-            }
-            if (groupFilter) {
-              if (
-                normalizeStr(r["group/receiver"]) !== groupFilter
-              )
-                return false;
-            }
-            return true;
-          })
-          .sort(
-            (a, b) =>
-              toNumber(b.ia_risk_score, 0) -
-              toNumber(a.ia_risk_score, 0)
-          )
-          .slice(0, 200);
-
-        filtered.forEach((row) => {
-          const tr = document.createElement("tr");
-          tr.classList.add("cursor-pointer");
-
-          const d = parseDate(row.timestamp);
-
-          const tdWhen = document.createElement("td");
-          tdWhen.textContent = formatDateTime(d);
-
-          const tdWho = document.createElement("td");
-          tdWho.textContent = normalizeStr(row.sender) || "—";
-
-          const tdGroup = document.createElement("td");
-          const origem = (row.origem || "").toUpperCase();
-          const grp = normalizeStr(row["group/receiver"]) || "—";
-          tdGroup.textContent =
-            origem === "GRUPO" ? grp : `${grp} (DM)`;
-
-          const tdText = document.createElement("td");
-          const msg = normalizeStr(row.message);
-          const snippet =
-            msg.length > 160 ? msg.slice(0, 157) + "..." : msg;
-
-          const riskSpan = document.createElement("span");
-          riskSpan.className = "risk-pill mr-2";
-          riskSpan.textContent = `Risco: ${toNumber(
-            row.ia_risk_score,
-            0
-          )}`;
-
-          const summarySpan = document.createElement("span");
-          summarySpan.className = "text-textMuted block mt-1";
-          summarySpan.textContent =
-            row.ia_summary || "Sem resumo da IA.";
-
-          const messageSpan = document.createElement("span");
-          messageSpan.textContent = snippet;
-
-          tdText.appendChild(messageSpan);
-          tdText.appendChild(summarySpan);
-          tdText.insertBefore(riskSpan, messageSpan);
-
-          tr.appendChild(tdWhen);
-          tr.appendChild(tdWho);
-          tr.appendChild(tdGroup);
-          tr.appendChild(tdText);
-
-          tr.addEventListener("click", () => {
-            openMessageModal(row, false);
-          });
-
-          tbody.appendChild(tr);
-        });
-      }
-
-      function renderContextTable(rows) {
-        const tbody = document.querySelector(
-          "#contextMessagesTable tbody"
-        );
-        if (!tbody) return;
-        clearElement(tbody);
-
-        const tagFilter = normalizeStr(
-          document.getElementById("ctxTagFilter")?.value
-        );
-        const contactFilter = normalizeStr(
-          document.getElementById("ctxContactFilter")?.value
-        );
-        const groupFilter = normalizeStr(
-          document.getElementById("ctxGroupFilter")?.value
-        );
-
-        const filtered = rows
-          .filter((r) => toNumber(r.ia_risk_score_ctx, 0) > 0)
-          .filter((r) => {
-            if (tagFilter) {
-              const tags = parseTags(r.ia_labels_ctx);
-              if (!tags.some((t) => t === tagFilter)) return false;
-            }
-            if (contactFilter) {
-              if (normalizeStr(r.sender) !== contactFilter) return false;
-            }
-            if (groupFilter) {
-              if (
-                normalizeStr(r["group/receiver"]) !== groupFilter
-              )
-                return false;
-            }
-            return true;
-          })
-          .sort(
-            (a, b) =>
-              toNumber(b.ia_risk_score_ctx, 0) -
-              toNumber(a.ia_risk_score_ctx, 0)
-          )
-          .slice(0, 100);
-
-        filtered.forEach((row) => {
-          const tr = document.createElement("tr");
-          tr.classList.add("cursor-pointer");
-
-          const d = parseDate(row.timestamp);
-
-          const tdWhen = document.createElement("td");
-          tdWhen.textContent = formatDateTime(d);
-
-          const tdWho = document.createElement("td");
-          tdWho.textContent = normalizeStr(row.sender) || "—";
-
-          const tdGroup = document.createElement("td");
-          const origem = (row.origem || "").toUpperCase();
-          const grp = normalizeStr(row["group/receiver"]) || "—";
-          tdGroup.textContent =
-            origem === "GRUPO" ? grp : `${grp} (DM)`;
-
-          const tdContext = document.createElement("td");
-          const msg = normalizeStr(row.message);
-          const snippet =
-            msg.length > 160 ? msg.slice(0, 157) + "..." : msg;
-
-          const riskSpan = document.createElement("span");
-          riskSpan.className = "risk-pill mr-2";
-          riskSpan.textContent = `Risco ctx: ${toNumber(
-            row.ia_risk_score_ctx,
-            0
-          )}`;
-
-          const summarySpan = document.createElement("span");
-          summarySpan.className = "text-textMuted block mt-1";
-          summarySpan.textContent =
-            row.ia_summary_ctx || "Sem resumo contextual.";
-
-          const messageSpan = document.createElement("span");
-          messageSpan.textContent = snippet;
-
-          tdContext.appendChild(messageSpan);
-          tdContext.appendChild(summarySpan);
-          tdContext.insertBefore(riskSpan, messageSpan);
-
-          tr.appendChild(tdWhen);
-          tr.appendChild(tdWho);
-          tr.appendChild(tdGroup);
-          tr.appendChild(tdContext);
-
-          tr.addEventListener("click", () => {
-            openMessageModal(row, true);
-          });
-
-          tbody.appendChild(tr);
-        });
-      }
-
-      // ============================
-      // MODAL – ESTILO WHATSAPP
-      // ============================
-
-      function openMessageModal(baseRow, useContextRisk) {
-        const backdrop = document.getElementById("msgModalBackdrop");
-        if (!backdrop) return;
-
-        // título / subtítulo
-        const subtitleEl = document.getElementById("msgModalSubtitle");
-        const senderEl = document.getElementById("msgMetaSender");
-        const groupEl = document.getElementById("msgMetaGroup");
-        const tsEl = document.getElementById("msgMetaTimestamp");
-        const riskBaseEl = document.getElementById("msgMetaRiskBase");
-        const riskCtxEl = document.getElementById("msgMetaRiskCtx");
-        const tagsBaseEl = document.getElementById("msgMetaTagsBase");
-        const tagsCtxEl = document.getElementById("msgMetaTagsCtx");
-        const summaryBaseEl = document.getElementById(
-          "msgMetaSummaryBase"
-        );
-        const summaryCtxEl = document.getElementById(
-          "msgMetaSummaryCtx"
-        );
-        const chatScroll = document.getElementById("msgChatScroll");
-
-        if (!chatScroll) return;
-
-        const d = parseDate(baseRow.timestamp);
-        const sender = normalizeStr(baseRow.sender);
-        const group = normalizeStr(baseRow["group/receiver"]);
-        const origem = (baseRow.origem || "").toUpperCase();
-
-        if (subtitleEl) {
-          subtitleEl.textContent = `${formatDateTime(
-            d
-          )} • ${sender || "—"} em ${
-            group || "—"
-          } (${origem || "—"})`;
-        }
-        if (senderEl) senderEl.textContent = sender || "—";
-        if (groupEl)
-          groupEl.textContent =
-            group || (origem === "DM" ? "DM" : "Grupo");
-
-        if (tsEl) tsEl.textContent = formatDateTime(d);
-
-        if (riskBaseEl)
-          riskBaseEl.textContent = `${toNumber(
-            baseRow.ia_risk_score,
-            0
-          )}`;
-        if (riskCtxEl)
-          riskCtxEl.textContent = `${
-            baseRow.ia_risk_score_ctx
-              ? toNumber(baseRow.ia_risk_score_ctx, 0)
-              : "—"
-          }`;
-
-        clearElement(tagsBaseEl);
-        parseTags(baseRow.ia_labels).forEach((t) => {
-          if (!t) return;
-          tagsBaseEl.appendChild(createTagBadge(t));
-        });
-
-        clearElement(tagsCtxEl);
-        parseTags(baseRow.ia_labels_ctx).forEach((t) => {
-          if (!t) return;
-          tagsCtxEl.appendChild(createTagBadge(t));
-        });
-
-        if (summaryBaseEl)
-          summaryBaseEl.textContent =
-            baseRow.ia_summary || "Sem resumo da IA (base).";
-        if (summaryCtxEl)
-          summaryCtxEl.textContent =
-            baseRow.ia_summary_ctx ||
-            "Sem resumo contextual para esta mensagem.";
-
-        // Reconstruir contexto
-        clearElement(chatScroll);
-
-        const ctxListStr = normalizeStr(baseRow.ia_ctx_rowids);
-        let ctxIds = ctxListStr
-          ? ctxListStr.split(",").map((s) => s.trim()).filter(Boolean)
-          : [];
-
-        // garante que a própria mensagem esteja na lista
-        const baseId = String(baseRow["#"] || "").trim();
-        if (baseId && !ctxIds.includes(baseId)) ctxIds.push(baseId);
-
-        const ctxRows = ctxIds
-          .map((id) => ROWS_BY_ID.get(id))
-          .filter((r) => !!r);
-
-        // ordena por timestamp
-        ctxRows.sort((a, b) => {
-          const da = parseDate(a.timestamp) || 0;
-          const db = parseDate(b.timestamp) || 0;
-          return da - db;
-        });
-
-        let lastDate = null;
-        ctxRows.forEach((r) => {
-          const d = parseDate(r.timestamp);
-          const sender = normalizeStr(r.sender);
-          const msg = normalizeStr(r.message);
-          if (!msg) return;
-
-          // divisor de data
-          if (!lastDate || !sameDay(d, lastDate)) {
-            lastDate = d;
-            const divider = document.createElement("div");
-            divider.className = "msg-chat-date-divider";
-            divider.textContent = formatDate(d);
-            chatScroll.appendChild(divider);
-          }
-
-          const isSelf = sender === SELF_NAME;
-          const isBase = String(r["#"] || "").trim() === baseId;
-
-          const rowDiv = document.createElement("div");
-          rowDiv.className = "msg-bubble-row" + (isSelf ? " me" : "");
-
-          const bubble = document.createElement("div");
-          bubble.className = "msg-bubble" + (isSelf ? " me" : "");
-
-          if (isBase) {
-            // destaque extra para a mensagem analisada
-            bubble.style.boxShadow =
-              "0 0 18px rgba(248,113,113,0.65)";
-            bubble.style.borderColor = "rgba(248,113,113,0.95)";
-          }
-
-          const header = document.createElement("div");
-          header.className = "msg-bubble-header";
-
-          const senderSpan = document.createElement("span");
-          senderSpan.className = "msg-bubble-sender";
-          senderSpan.textContent = sender || "—";
-
-          const timeSpan = document.createElement("span");
-          timeSpan.className = "msg-bubble-time";
-          timeSpan.textContent = formatTime(d);
-
-          header.appendChild(senderSpan);
-          header.appendChild(timeSpan);
-
-          const textDiv = document.createElement("div");
-          textDiv.className = "msg-bubble-text";
-          textDiv.textContent = msg;
-
-          bubble.appendChild(header);
-          bubble.appendChild(textDiv);
-          rowDiv.appendChild(bubble);
-          chatScroll.appendChild(rowDiv);
-        });
-
-        // scroll para a baseRow
-        setTimeout(() => {
-          const bubbles = chatScroll.querySelectorAll(".msg-bubble");
-          bubbles.forEach((b) => {
-            if (b.style.boxShadow) {
-              b.scrollIntoView({ block: "center", behavior: "smooth" });
-            }
-          });
-        }, 50);
-
-        backdrop.style.display = "flex";
-      }
-
-      function closeMessageModal() {
-        const backdrop = document.getElementById("msgModalBackdrop");
-        if (backdrop) backdrop.style.display = "none";
-      }
-
-      // ============================
-      // CARREGAMENTO VIA JSONP
-      // ============================
-
-      function loadDashboardData(force) {
-        updateApiStatus(false, "Carregando dados...");
-
-        // Cria script JSONP
-        const ts = Date.now();
-        const script = document.createElement("script");
-        script.src = `${API_URL}?callback=handleDashboardData&ts=${ts}`;
-        script.async = true;
-        script.onerror = () => {
-          console.error("Erro ao carregar JSONP da API.");
-          updateApiStatus(false, "Falha ao carregar dados da API.");
-        };
-        document.body.appendChild(script);
-      }
-
-      // Callback JSONP — precisa ser global
-      function handleDashboardData(payload) {
-        try {
-          let rows = [];
-          if (Array.isArray(payload)) {
-            rows = payload;
-          } else if (payload && Array.isArray(payload.data)) {
-            rows = payload.data;
-          } else if (payload && Array.isArray(payload.rows)) {
-            rows = payload.rows;
-          }
-
-          DASH_ROWS = rows || [];
-          buildGlobalRowMap(DASH_ROWS);
-
-          updateApiStatus(true, "API Online · dados atualizados");
-
-          computeAndRenderCards(DASH_ROWS);
-          renderTagDistribution(DASH_ROWS);
-          renderTopGroupsAndDMs(DASH_ROWS);
-          renderHighRiskSendersTable(DASH_ROWS);
-          renderLastMessage(DASH_ROWS);
-          populateRiskFilters(DASH_ROWS);
-          renderRiskBaseTable(DASH_ROWS);
-          renderContextTable(DASH_ROWS);
-        } catch (e) {
-          console.error("Erro ao processar payload JSONP:", e);
-          updateApiStatus(false, "Erro ao interpretar dados da API.");
-        }
-      }
-
-      // Torna a função visível globalmente
-      window.handleDashboardData = handleDashboardData;
-
-      // ============================
-      // EVENTOS E INICIALIZAÇÃO
-      // ============================
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const reloadBtn = document.getElementById("reloadBtn");
-        if (reloadBtn) {
-          reloadBtn.addEventListener("click", () => {
-            loadDashboardData(true);
-          });
-        }
-
-        const backdrop = document.getElementById("msgModalBackdrop");
-        const closeBtn = document.getElementById("msgModalCloseBtn");
-        if (closeBtn) {
-          closeBtn.addEventListener("click", closeMessageModal);
-        }
-        if (backdrop) {
-          backdrop.addEventListener("click", (e) => {
-            if (e.target === backdrop) closeMessageModal();
-          });
-        }
-
-        // filtros de risco
-        const riskTagSelect = document.getElementById("riskTagFilter");
-        const riskContactSelect = document.getElementById(
-          "riskContactFilter"
-        );
-        const riskGroupSelect = document.getElementById(
-          "riskGroupFilter"
-        );
-
-        [riskTagSelect, riskContactSelect, riskGroupSelect].forEach(
-          (sel) => {
-            if (!sel) return;
-            sel.addEventListener("change", () => {
-              renderRiskBaseTable(DASH_ROWS);
-            });
-          }
-        );
-
-        const ctxTagSelect = document.getElementById("ctxTagFilter");
-        const ctxContactSelect = document.getElementById(
-          "ctxContactFilter"
-        );
-        const ctxGroupSelect = document.getElementById(
-          "ctxGroupFilter"
-        );
-
-        [ctxTagSelect, ctxContactSelect, ctxGroupSelect].forEach(
-          (sel) => {
-            if (!sel) return;
-            sel.addEventListener("change", () => {
-              renderContextTable(DASH_ROWS);
-            });
-          }
-        );
-
-        // Carrega dados na inicialização
-        loadDashboardData(false);
+    if (Array.isArray(tags)) {
+      tags.forEach(t => {
+        if (!t) return;
+        const low = String(t).toLowerCase();
+        if (low === "neutro" || low === "ignorado") return;
+        container.appendChild(createTagPill(t));
       });
-    </script>
+    } else {
+      Object.keys(tags).forEach(tag => {
+        const low = tag.toLowerCase();
+        if (low === "neutro" || low === "ignorado") return;
+        const count = tags[tag];
+        const pill = createTagPill(
+          count ? `${tag} (${tag})` : String(tag)
+        );
+        container.appendChild(pill);
+      });
+    }
+  }
 
-  </div> <!-- fim wrapper principal -->
+  // Modal
+  function openMessageModal(sourceType, index) {
+    const source =
+      sourceType === "base" ? highRiskMessagesCache : contextMessagesCache;
+    const msg = source[index];
+    if (!msg) return;
+
+    const modal = document.getElementById("messageModal");
+    if (!modal) return;
+
+    const dirText =
+      msg.direction === "sent" ? "Mensagem enviada" : "Mensagem recebida";
+    const score = msg.score ?? msg.ia_risk_score ?? msg.ia_risk_score_ctx;
+    const ts = msg.timestamp || msg.date || "";
+
+    setText(
+      "modalMeta",
+      `${dirText} • Score: ${score != null ? score : "—"} • ${ts}`
+    );
+    setText("modalTitle", msg.sender_name || msg.chat_name || "—");
+
+    renderTagsInto(
+      document.getElementById("modalLabels"),
+      msg.labels || msg.tags
+    );
+
+    setText("modalMainMessage", msg.main_text || msg.text || msg.preview || "");
+    setText("modalContextBefore", msg.context_before || msg.before || "");
+    setText("modalContextAfter", msg.context_after || msg.after || "");
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+  }
+
+  function closeMessageModal() {
+    const modal = document.getElementById("messageModal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  window.closeMessageModal = closeMessageModal;
+  window.openMessageModal = openMessageModal;
+</script>
+
+	
+<!-- ========================================================= -->
+<!--   ETAPA 5/10 — NÚCLEO DE INTEGRAÇÃO COM APPS SCRIPT       -->
+<!--   (fetch + preprocess + status)                           -->
+<!-- ========================================================= -->
+
+<script>
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbylJFpFSLxAaEC_sCx9d4jpGtLBW_4d62kUlZ7EehgFWtlr0Wvc5Jv-ue2e87QEWXtX/exec";
+
+let GLOBAL_ROWS = [];   // base de mensagens (histórico cru)
+let GLOBAL_READY = false;
+
+/* ---------------------------------------------------------
+   Atualiza indicador de estado da API no cabeçalho
+--------------------------------------------------------- */
+function setApiStatus(text, colorClass = "text-yellow-400") {
+  const el = document.getElementById("apiStatusText");
+  if (!el) return;
+  el.textContent = text;
+  el.className = colorClass;
+}
+
+/* ---------------------------------------------------------
+   Converte valores problemáticos, datas, NULOS, etc.
+   Aqui apenas garantimos estrutura básica.
+   A lógica avançada entra nas etapas seguintes.
+--------------------------------------------------------- */
+function preprocessRows(rows) {
+  if (!rows || !Array.isArray(rows)) return [];
+
+  return rows.map(r => {
+    return {
+      id: r.id ?? null,
+      timestamp: r.timestamp ?? null,
+      sender: r.sender ?? "",
+      message: r.message ?? "",
+      group: r.group ?? "",
+      ia_risk_score: Number(r.ia_risk_score ?? 0),
+      ia_risk_score_ctx: Number(r.ia_risk_score_ctx ?? 0),
+      ia_labels: (r.ia_labels ?? "").toLowerCase(),
+      ia_summary: r.ia_summary ?? "",
+      ia_labels_ctx: (r.ia_labels_ctx ?? "").toLowerCase(),
+      ia_summary_ctx: r.ia_summary_ctx ?? "",
+    };
+  });
+}
+
+/* ---------------------------------------------------------
+   Carrega os dados do Apps Script
+   (Etapa 5 não renderiza nada — apenas baixa e prepara)
+--------------------------------------------------------- */
+async function loadDashboardData() {
+  try {
+    setApiStatus("Carregando...", "text-yellow-400");
+
+    const res = await fetch(API_URL, { method: "GET" });
+    if (!res.ok) throw new Error("Falha no fetch da API");
+
+    const data = await res.json();
+    if (!data || !data.rows) throw new Error("Resposta inválida");
+
+    GLOBAL_ROWS = preprocessRows(data.rows);
+    GLOBAL_READY = true;
+
+    setApiStatus("OK (dados carregados)", "text-green-400");
+
+    // Na próxima etapa, chamaremos:
+    // renderAllCards(GLOBAL_ROWS);
+    // renderAllPanels(GLOBAL_ROWS);
+
+  } catch (err) {
+    console.error(err);
+    setApiStatus("Erro ao carregar", "text-red-400");
+  }
+}
+
+/* ---------------------------------------------------------
+   Aciona o load assim que a dashboard abrir pós-login
+--------------------------------------------------------- */
+function reloadDashboard() {
+  if (!GLOBAL_READY) {
+    loadDashboardData();
+  } else {
+    // Apenas recarrega da API novamente
+    GLOBAL_READY = false;
+    loadDashboardData();
+  }
+}
+
+// Se quiser que carregue automaticamente ao abrir (opcional):
+// window.addEventListener("load", loadDashboardData);
+
+</script>
+
+
 </body>
 </html>
-		
+
+
+
+
+
+	  
